@@ -3833,9 +3833,9 @@ MonoBehaviour:
   gameCanvas: {fileID: 1132100455}
   pauseGameCanvas: {fileID: 1333984937}
   resoultGameCanvas: {fileID: 531091697}
-  textScore: {fileID: 1749659658}
-  textTotalNumberCleanLines: {fileID: 1557366662}
-  textGameLevel: {fileID: 1380639408}
+  textScore: {fileID: 1557366662}
+  textTotalNumberCleanLines: {fileID: 1380639408}
+  textGameLevel: {fileID: 1749659658}
   finaleScore: {fileID: 1023718302}
 --- !u!114 &1541583631
 MonoBehaviour:
