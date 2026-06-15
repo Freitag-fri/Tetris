@@ -1,6 +1,7 @@
 using Assets.Scripts;
 using Cinemachine;
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -15,6 +16,9 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject menuPanel;
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private GameObject skinsMenu;
+
+    [SerializeField] private GameObject skinTextObj;
+
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
 
@@ -60,7 +64,9 @@ public class MenuManager : MonoBehaviour
         //settingsCamera.Priority = 1;
 
         menuPanel.SetActive(false);
-        StartCoroutine(OpenSettingsAfterTime());
+        settingsPanel.SetActive(true);
+
+        //StartCoroutine(OpenSettingsAfterTime());
     }
 
     public void EnterToMainMenu()
@@ -72,6 +78,7 @@ public class MenuManager : MonoBehaviour
         settingsPanel.SetActive(false);
         menuPanel.SetActive(true);
         skinsMenu.SetActive(false);
+        skinTextObj.SetActive(false);
         currentMenuStatus = MenuStatus.MainMenu;
 
         //StartCoroutine(CloseSettingAfterTime());
@@ -96,6 +103,9 @@ public class MenuManager : MonoBehaviour
         boardCamera.Priority = 3;
         blockCamera.Priority = 0;
         currentMenuStatus = MenuStatus.BoardSkins;
+
+        skinTextObj.SetActive(true);
+        skinTextObj.GetComponent<TMP_Text>().SetText(materialManager.GetCurrentBoardSkinId());
     }
 
     public void EnterToBlockSkins()
@@ -103,25 +113,25 @@ public class MenuManager : MonoBehaviour
         blockCamera.Priority = 3;
         boardCamera.Priority = 0;
         currentMenuStatus = MenuStatus.BlockSkins;
+
+        skinTextObj.SetActive(true);
+        skinTextObj.GetComponent<TMP_Text>().SetText(GetCurrentSkinName());
     }
 
     //IEnumerable
-    IEnumerator OpenSettingsAfterTime()
-    {
-        yield return new WaitForSeconds(2.0f);
-        settingsPanel.SetActive(true);
-    }
+    //IEnumerator OpenSettingsAfterTime()
+    //{
+    //    yield return new WaitForSeconds(2.0f);
+    //    settingsPanel.SetActive(true);
+    //}
 
-    IEnumerator CloseSettingAfterTime()
-    {
-        yield return new WaitForSeconds(2.0f);
-        menuPanel.SetActive(true);
-    }
+    //IEnumerator CloseSettingAfterTime()
+    //{
+    //    yield return new WaitForSeconds(2.0f);
+    //    menuPanel.SetActive(true);
+    //}
 
     private Vector2 touchPossition;
-
-
-    
 
     private void SensorNavigationSkinsMenu()
     {
@@ -173,17 +183,33 @@ public class MenuManager : MonoBehaviour
         {
             materialManager.NextBlockSkin();
         }
-
+        skinTextObj.GetComponent<TMP_Text>().SetText(GetCurrentSkinName());
     }
+
     private void SensorMoveRight()
     {
         if (currentMenuStatus == MenuStatus.BoardSkins)
         {
             materialManager.PreviousBoardSkin();
+
         }
         else if (currentMenuStatus == MenuStatus.BlockSkins)
         {
             materialManager.PreviousBlockSkin();
         }
+        skinTextObj.GetComponent<TMP_Text>().SetText(GetCurrentSkinName());
+    }
+
+    private string GetCurrentSkinName()
+    {
+        if(currentMenuStatus == MenuStatus.BoardSkins)
+        {
+            return materialManager.GetCurrentBoardSkinId();
+        }
+        else if (currentMenuStatus == MenuStatus.BlockSkins)
+        {
+            return materialManager.GetCurrentDetailSkinId();
+        }
+        return "no name";
     }
 }

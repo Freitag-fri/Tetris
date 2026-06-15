@@ -25,7 +25,7 @@ namespace Assets.Scripts
 
         [SerializeField] private TMP_Text textScore;
         [SerializeField] private TMP_Text textTotalNumberCleanLines;
-        [SerializeField] private TMP_Text textGameLevel;
+        [SerializeField] private TMP_Text textGameLevel; // textGameLevel.SetText("{0}", score); rewrite for all
         [SerializeField] private TMP_Text finaleScore;
 
         public void SetStartGameCanvas()
