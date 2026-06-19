@@ -54,6 +54,8 @@ public class MenuManager : MonoBehaviour
 
     public void Play()
     {
+        GameManager.Instance.BoardMaterial = materialManager.GetCurrentBoardSkin().Material;
+        GameManager.Instance.BlockMaterial = materialManager.GetCurrentBlockSkin().Material;
         SceneManager.LoadScene("GameScene");
     }
 
@@ -105,7 +107,7 @@ public class MenuManager : MonoBehaviour
         currentMenuStatus = MenuStatus.BoardSkins;
 
         skinTextObj.SetActive(true);
-        skinTextObj.GetComponent<TMP_Text>().SetText(materialManager.GetCurrentBoardSkinId());
+        skinTextObj.GetComponent<TMP_Text>().SetText(GetCurrentSkinName());
     }
 
     public void EnterToBlockSkins()
@@ -204,11 +206,11 @@ public class MenuManager : MonoBehaviour
     {
         if(currentMenuStatus == MenuStatus.BoardSkins)
         {
-            return materialManager.GetCurrentBoardSkinId();
+            return materialManager.GetCurrentBoardSkin().Id;
         }
         else if (currentMenuStatus == MenuStatus.BlockSkins)
         {
-            return materialManager.GetCurrentDetailSkinId();
+            return materialManager.GetCurrentBlockSkin().Id;
         }
         return "no name";
     }

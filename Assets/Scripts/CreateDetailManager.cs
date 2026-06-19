@@ -10,10 +10,19 @@ namespace Assets.Scripts
         [SerializeField] private GameObject[] prefabDetails; // todo check is empty in start()
         [SerializeField] private GameObject nextDetailPosition;
         
-		[SerializeField] private GameObject nextDetail;
+		private GameObject nextDetail;
         private int prefabDetailsCount;
-		
-		// Use this for initialization
+
+        [SerializeField] private Material blockMaterioal;
+        [SerializeField] private Material boardMaterioal;
+
+        private void Awake()
+        {
+            blockMaterioal.mainTexture = GameManager.Instance.BlockMaterial.mainTexture;
+            boardMaterioal.mainTexture = GameManager.Instance.BoardMaterial.mainTexture;
+        }
+
+        // Use this for initialization
         void Start()
 		{
             prefabDetailsCount = prefabDetails.Length;

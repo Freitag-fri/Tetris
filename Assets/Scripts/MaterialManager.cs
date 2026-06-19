@@ -89,14 +89,14 @@ namespace Assets.Scripts
         }
 
 
-        public string GetCurrentBoardSkinId()
+        public Skins GetCurrentBoardSkin()
         {
-            return _boardSkinsPrefabs[_currentBoardSkinIndex].Id;
+            return _boardSkinsPrefabs[_currentBoardSkinIndex];
         }
 
-        public string GetCurrentDetailSkinId()
+        public Skins GetCurrentBlockSkin()
         {
-            return _detailSkinsPrefabs[_currentDetailSkinIndex].Id;
+            return _detailSkinsPrefabs[_currentDetailSkinIndex];
         }
     }
 }
