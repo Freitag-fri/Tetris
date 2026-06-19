@@ -14,5 +14,8 @@
     <Compile Update="Assets\Scripts\MaterialManager.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Assets\Scripts\GameManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
 </Project>

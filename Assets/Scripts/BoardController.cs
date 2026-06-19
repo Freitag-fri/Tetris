@@ -138,21 +138,6 @@ public class BoardController : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        // for debuging
-        //
-        //GameObject pointPossition = new GameObject("pointPossition"); /*Instantiate(prefabDetails[2], new Vector2(15, 0));*/
-        //pointPossition.transform.position = new Vector2(15, 0);
-        //int boardPositionsLength = boardDebugingDetails.Length;
-        //for (int i = 0; i < boardPositionsLength; i++)
-        //{
-        //    int row = i / 10;
-        //    int col = i % 10;
-        //    GameObject newObject = Instantiate(prefabForDebug, pointPossition.transform/*, new Vector2(row, col)*/);
-        //    newObject.transform.localPosition = new Vector2(col, -row);
-        //    boardDebugingDetails[i] = newObject;
-        //}
-        //
-
         int dropDetailsLength = dropDetails.Length;
         for (int i = 0; i < dropDetailsLength; i++) // rewrite: move to start() and dont Destroy in RestartGame
         {
