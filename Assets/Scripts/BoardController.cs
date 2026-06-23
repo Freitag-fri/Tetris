@@ -3,16 +3,12 @@ using Assets.Scripts;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.SocialPlatforms.Impl;
-using UnityEngine.UIElements;
-using UnityEngine.XR;
-using static UnityEngine.Rendering.DebugUI.Table;
+using UnityEngine.InputSystem.Controls;
+using UnityEngine.InputSystem.EnhancedTouch;
+using TouchPhase =  UnityEngine.InputSystem.TouchPhase;
 
 public struct LevelsSettings
 {
@@ -53,12 +49,8 @@ public static class LevelManager
 
 public class BoardController : MonoBehaviour
 {
-    //public Material materialEmptyPossition; // for debuging empty positions
-    //public Material materialFullPossition; // for debuging full positions
-    //public GameObject prefabForDebug; // detal for debuging
     public GameObject prefabForDropDetail;
     public GameObject[] dropDetails = new GameObject[4];
-    //public GameObject[] boardDebugingDetails = new GameObject[boardWidth * boardHeight]; // for debuging 200
 
     public bool isCreateDetail;
     public event Action CreateDetailEvent;
@@ -164,10 +156,8 @@ public class BoardController : MonoBehaviour
         stepPeriod = levelSettings.stepPeriod;
         smoothMoveDuration = stepPeriod / 5;
         timeUntillNextStep = stepPeriod;
-
         canvasController.SetStatisticParams(new StatisticParams(score, totalNumberCleanLines, levelSettings.level));
 
-        //StartCoroutine(SmoothMove(smoothMoveDuration));
         IsPause = false;
         isCreateDetail = true;
     }
@@ -191,7 +181,6 @@ public class BoardController : MonoBehaviour
     private void FinishMatch()
     {
         StopAllCoroutines();
-        //reDrawDebugingObjects(); // for debuging
         IsPause = true;
 
         var levelSettings = LevelManager.GetLevelSettingsByClearLines(totalNumberCleanLines);
@@ -219,12 +208,6 @@ public class BoardController : MonoBehaviour
 
             if (touch.press.wasPressedThisFrame)
             {
-                //touchPossition = touch.position.ReadValue();
-                //Vector2 startPosition = touch.position.ReadValue();
-                //Debug.Log($"[НАЖАТИЕ] Палец коснулся экрана в точке: {startPosition}");
-
-
-
                 Vector2 screenPos = touch.position.ReadValue();
                 Ray ray = mainCamera.ScreenPointToRay(screenPos);
 
@@ -242,7 +225,6 @@ public class BoardController : MonoBehaviour
                 }
             }
 
-
             // Проверяем, зажата ли точка касания в данный момент
             if (touch.press.isPressed)
             {
@@ -254,14 +236,6 @@ public class BoardController : MonoBehaviour
                 // Проверяем, пересекает ли луч нашу математическую плоскость стола
                 if (tablePlane.Raycast(ray, out enter))
                 {
-                    /*
-                    // Получаем точную Vector3 точку пересечения в мире Unity
-                    Vector3 worldPos = ray.GetPoint(enter);
-
-                    // Двигаем ваш объект в эту точку
-                    detTest.transform.position = worldPos;
-                    */
-
                     var currentPosition = ray.GetPoint(enter);
                     var deltaX = currentPosition.x - touchPossition.x;
                     if (deltaX > 1)
@@ -278,20 +252,11 @@ public class BoardController : MonoBehaviour
                         touchPossition.x = currentPosition.x;
                         isTouchMove = true;
                     }
-                    //else if (currentPosition.y - touchPossition.y > -3)
-                    //{
-                    //    PressKeySpace();
-                    //    GhostPieceDetail();
-                    //    isTouchMove = true;
-                    //}
-
                 }
             }
 
             if (touch.press.wasReleasedThisFrame)
             {
-                Debug.Log($"wasReleasedThisFrame");
-
                 Vector2 screenPos = touch.position.ReadValue();
                 Ray ray = mainCamera.ScreenPointToRay(screenPos);
 
@@ -305,7 +270,7 @@ public class BoardController : MonoBehaviour
                     {
                         PressKeySpace();
                         GhostPieceDetail();
-                    } 
+                    }
                     else if (!isTouchMove)
                     {
                         PressKeyW();
@@ -321,8 +286,6 @@ public class BoardController : MonoBehaviour
             //Debug.Log($"тачпад не активен");
         }
 
-
-
         if (isCreateDetail)
         {
             CreateNewDetail();
@@ -330,11 +293,11 @@ public class BoardController : MonoBehaviour
 
         if (!IsPause)
         {
-            moveDetailController();
+            MoveDetailController();
         }
     }
 
-    private void moveDetailController()
+    private void MoveDetailController()
     {
         if (activeDetail == null)
         {  return; }
@@ -342,16 +305,13 @@ public class BoardController : MonoBehaviour
         if (timeUntillNextStep <= 0)
         {
             Vector2 newDetailPosition = targetPosition + Vector2.down;
-            if (checkNewDetailPosition(newDetailPosition, lastActiveDetailRotation))
+            if (СheckNewDetailPosition(newDetailPosition, lastActiveDetailRotation))
             {
                 TargetPosition = newDetailPosition;
                 timeUntillNextStep = stepPeriod;
             }
             else
             {
-                // here we need to check if we need to delete some lines and then create new detail
-
-
                 var currentDetailPosition = targetPosition;
                 var detailChildCount = activeDetail.transform.childCount;
                 for (int i = 0; i < detailChildCount; i++)
@@ -363,7 +323,7 @@ public class BoardController : MonoBehaviour
                         FinishMatch();
                         Debug.Log("Game over");
                         //break;
-                        return; // when drop detail, it dont chow, need to use break;  but dont call changeDetailParent for correct cleaning 
+                        return; // when drop detail, it dont chow, need to use break;  but dont call СhangeDetailParent for correct cleaning 
                     }
                 }
                 if(activeDetailMoveCoroutine != null)
@@ -372,9 +332,9 @@ public class BoardController : MonoBehaviour
                     activeDetailMoveCoroutine = null;
                 }
 
-                updateBoardPositionsForNewDetail();
-                changeDetailParent();
-                checkLines();
+                UpdateBoardPositionsForNewDetail();
+                СhangeDetailParent();
+                СheckLines();
                 isCreateDetail = true;
 
                 return;
@@ -384,31 +344,26 @@ public class BoardController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.D))
         {
             PressKeyD();
-            //GhostPieceDetail();
         }
 
         if (Input.GetKeyDown(KeyCode.A))
         {
             PressKeyA();
-            //GhostPieceDetail();
         }
 
-        if (Input.GetKeyDown(KeyCode.W)) // соединить W и S в один метод для поворота, а не дублировать код
+        if (Input.GetKeyDown(KeyCode.W))
         {
             PressKeyW();
-            //GhostPieceDetail();
         }
 
         if (Input.GetKeyDown(KeyCode.S))
         {
             PressKeyS();
-            //GhostPieceDetail();
         }
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
             PressKeySpace();
-            //GhostPieceDetail();
         }
 
         timeUntillNextStep -= Time.deltaTime;
@@ -421,7 +376,7 @@ public class BoardController : MonoBehaviour
         if (isHardDropping) return;
 
         Vector2 newDetailPosition = targetPosition + Vector2.right;
-        if (checkNewDetailPosition(newDetailPosition, lastActiveDetailRotation))
+        if (СheckNewDetailPosition(newDetailPosition, lastActiveDetailRotation))
         {
             TargetPosition = newDetailPosition;
         }
@@ -433,7 +388,7 @@ public class BoardController : MonoBehaviour
         if (isHardDropping) return;
 
         Vector2 newDetailPosition = targetPosition + Vector2.left;
-        if (checkNewDetailPosition(newDetailPosition, lastActiveDetailRotation))
+        if (СheckNewDetailPosition(newDetailPosition, lastActiveDetailRotation))
         {
             TargetPosition = newDetailPosition;
         }
@@ -462,84 +417,24 @@ public class BoardController : MonoBehaviour
     {
         if (isHardDropping) return;
 
-        int countEmptyRows = getCountEmptyRowsUnderDetail();
+        int countEmptyRows = GetCountEmptyRowsUnderDetail();
         var newDetailPosition = targetPosition;
         newDetailPosition.y = newDetailPosition.y - countEmptyRows;
         timeUntillNextStep = smoothMoveDuration;
 
-        if (checkNewDetailPosition(newDetailPosition, lastActiveDetailRotation))
+        if (СheckNewDetailPosition(newDetailPosition, lastActiveDetailRotation))
         {
             TargetPosition = newDetailPosition;
             isHardDropping = true;
-            //ChangeDetailPosition(newDetailPosition);
         }
     }
 
-    //private void TurnDetail(TurnResult[] arr)
-    //{
-    //    var f = arr.FirstOrDefault(v => v.NewPosition > 5);
-    //    var f1 = arr.Select(v => new Turn(v.IsSuccess, v.NewPosition)).ToList();
-    //    if (f != null)
-    //    {
-    //    }
-    //    //var f2 = arr.Contains(v => v.id == 7);
-    //    var f5 = new int[5];
-    //    var f6 = f5.Contains(8);
-
-    //    var groupedUsers = arr.GroupBy(u => u.NewPosition);
-    //    groupedUsers[3].ToList().ForEach(v => new Turn(v.IsSuccess, v.NewPosition));
-    //}
-
-    //private class TurnResult
-    //{
-    //    public int id;
-    //    public bool IsSuccess;
-    //    public int NewPosition;
-    //}
-
-    //private class Turn
-    //{
-    //    public Turn (bool IsSuccess, int NewPosition)
-    //    {
-    //            this.IsSuccess = IsSuccess;
-    //            this.NewPosition = NewPosition;
-    //    }
-
-
-    //    public bool IsSuccess;
-    //    public int NewPosition;
-    //}
-
-    //private void TurnDetail(bool[] newDetailForm)
-    //{
-    //    //Position after wall kick applied during rotation
-    //    Vector2 kickedPosition;
-
-    //    var isCheck = checkNewDetailPosition(lastActiveDetailPosition, newDetailForm);
-    //    if (isCheck)
-    //    {
-    //        ChangeDetailPosition(newDetailForm);
-    //    }
-    //    else if (checkNewDetailPosition(kickedPosition = lastActiveDetailPosition + new Vector2(1, 0), newDetailForm))
-    //    {
-    //        ChangeDetailPosition(newDetailForm);
-    //        ChangeDetailPosition(kickedPosition);
-    //        Debug.Log("move possition to the rigth for spin");
-    //    }
-    //    else if (checkNewDetailPosition(kickedPosition = lastActiveDetailPosition + new Vector2(-1, 0), newDetailForm))
-    //    {
-    //        ChangeDetailPosition(newDetailForm);
-    //        ChangeDetailPosition(kickedPosition);
-    //        Debug.Log("move possition to the left for spin");
-    //    }
-    //}
-
     Vector2[] offsets = {
-        Vector2.zero,           // First, check the current position
-        Vector2.right,   // Shift to the right
-        Vector2.left,  // Shift to the left
-        Vector2.right * 2,   // Double shift to the right
-        Vector2.left * 2   // Double shift to the left
+        Vector2.zero,       // First, check the current position
+        Vector2.right,      // Shift to the right
+        Vector2.left,       // Shift to the left
+        Vector2.right * 2,  // Double shift to the right
+        Vector2.left * 2    // Double shift to the left
     };
 
     private void TurnDetail(bool[] newDetailForm)
@@ -547,7 +442,7 @@ public class BoardController : MonoBehaviour
         foreach (var offset in offsets)
         {
             Vector2 potentialPosition = targetPosition + offset;
-            if (checkNewDetailPosition(potentialPosition, newDetailForm))
+            if (СheckNewDetailPosition(potentialPosition, newDetailForm))
             {
                 // If we actually shifted, update the position
                 if (offset != Vector2.zero)
@@ -558,14 +453,11 @@ public class BoardController : MonoBehaviour
 
                 // If the check passes, apply the changes
                 ChangeDetailRotation(newDetailForm);
-
                 return; // Rotation successful, exit the function
             }
         }
         // If we reached this point, no valid position was found — rotation is impossible
     }
-
-
 
     private void ChangeDetailRotation(bool[] newDetailForm)
     {
@@ -575,10 +467,9 @@ public class BoardController : MonoBehaviour
     private void ChangeDetailPosition(Vector2 newDetailPosition)
     {
         TargetPosition = newDetailPosition;
-        //activeDetail.transform.localPosition = newDetailPosition;
     }
 
-    int getCountEmptyRowsUnderDetail()
+    int GetCountEmptyRowsUnderDetail()
     {
         var currentNewDetailPosition = TargetPosition;
         var detailChildCount = activeDetail.transform.childCount;
@@ -611,7 +502,7 @@ public class BoardController : MonoBehaviour
     {
         var currentNewDetailPosition = targetPosition;
         var detailChildCount = activeDetail.transform.childCount;
-        int countEmptyRows = getCountEmptyRowsUnderDetail();
+        int countEmptyRows = GetCountEmptyRowsUnderDetail();
 
         for (int i = 0; i < detailChildCount; i++)
         {
@@ -622,8 +513,7 @@ public class BoardController : MonoBehaviour
         }
     }
 
-
-    void changeDetailParent()
+    void СhangeDetailParent()
     {
         activeDetail.transform.localPosition = targetPosition;
         var newDetailComponent = activeDetail.GetComponent<Detail>();
@@ -637,7 +527,7 @@ public class BoardController : MonoBehaviour
         Destroy(activeDetail);
     }
 
-    void checkLines()
+    void СheckLines()
     {
         int numberCleanLines = 0;
         for (int i = boardHeight - 1; i >= 0; i--)
@@ -655,7 +545,7 @@ public class BoardController : MonoBehaviour
 
             if (isFullLine)
             {
-                cleanLine(i);
+                СleanLine(i);
                 i++; // After cleaning the line, we lower details in the board, so we need to check the same line
                 numberCleanLines++;
             }
@@ -678,12 +568,12 @@ public class BoardController : MonoBehaviour
     }
 
 
-    void cleanLine(int cleaningLine)
+    void СleanLine(int cleaningLine)
     {
         for (int j = 0; j < boardWidth; j++)
         {
             Destroy(boardPositions[cleaningLine * boardWidth + j]);
-            boardPositions[cleaningLine * boardWidth + j] = null; // correct?
+            boardPositions[cleaningLine * boardWidth + j] = null;
         }
 
         for (int k = cleaningLine - 1; k >= 0; k--)
@@ -709,7 +599,6 @@ public class BoardController : MonoBehaviour
                 break;
             }
         }
-
     }
 
     void CreateNewDetail()
@@ -746,7 +635,7 @@ public class BoardController : MonoBehaviour
         CreateDetailEvent?.Invoke();
     }
 
-    bool checkNewDetailPosition(Vector2 detailPossition, bool[] detail)
+    bool СheckNewDetailPosition(Vector2 detailPossition, bool[] detail)
     {
         var localBoardPositions = boardPositions;
 
@@ -782,7 +671,7 @@ public class BoardController : MonoBehaviour
         return true;
     }
 
-    void updateBoardPositionsForNewDetail()
+    void UpdateBoardPositionsForNewDetail()
     {
         var currentDetailPosition = targetPosition;
         var detailChildCount = activeDetail.transform.childCount;
@@ -795,48 +684,26 @@ public class BoardController : MonoBehaviour
                 continue;
 
             boardPositions[col + row * boardWidth] = activeDetail.transform.GetChild(i).gameObject; // check (col + row * boardWidth) before set
-            //reDrawDebugingObjects(); // for debuging
         }
     }
-
-    //void reDrawDebugingObjects()
-    //{
-    //    int boardPositionsLength = boardDebugingDetails.Length;
-    //    for (int i = 0; i < boardPositionsLength; i++)
-    //    {
-    //        if (boardPositions[i] != null)
-    //        {
-    //            boardDebugingDetails[i].GetComponent<Renderer>().material = materialFullPossition;
-    //        }
-    //        else
-    //        {
-    //            boardDebugingDetails[i].GetComponent<Renderer>().material = materialEmptyPossition;
-    //        }
-    //    }
-    //}
-
 
     IEnumerator SmoothMove(float duration)
     {
         if (!activeDetail) yield break;
 
         float elapsedTime = 0f;
-        // Запоминаем НАЧАЛЬНУЮ точку один раз перед стартом
         Vector2 startPosition = activeDetail.transform.position;
 
-        // Цикл выполняется, пока не выйдет время
         while (elapsedTime < duration)
         {
             if (activeDetail)
             {
-                // Двигаемся от СТАРТОВОЙ точки к ЦЕЛЕВОЙ
                 activeDetail.transform.localPosition = Vector2.Lerp(startPosition, targetPosition, elapsedTime / duration);
                 elapsedTime += Time.deltaTime;
             }
-            yield return null; // Ждем следующий кадр
+            yield return null;
         }
 
-        // В конце жестко приравниваем к цели, чтобы убрать погрешность
         if (activeDetail)
         {
             activeDetail.transform.localPosition = targetPosition;
