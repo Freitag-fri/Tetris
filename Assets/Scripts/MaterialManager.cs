@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using DG.Tweening;
 
 namespace Assets.Scripts
@@ -20,6 +19,28 @@ namespace Assets.Scripts
         private int _curentBoardIndex = 0;
         private int _curentDetailIndex = 0;
 
+        public enum MoveDirection
+        {
+            Left = -1,
+            Right = 1
+        }
+
+        public struct AnimationConfig
+        {
+            public float Offset;
+            public float Duration;
+
+            public AnimationConfig(float offset, float duration)
+            {
+                Offset = offset;
+                Duration = duration;
+            }
+        }
+
+        private readonly AnimationConfig _boardConfig = new AnimationConfig(40f, 1f);
+        private readonly AnimationConfig _blockConfig = new AnimationConfig(8f, 0.9f);
+
+
         // Use this for initialization
         void Start()
 		{
@@ -38,56 +59,22 @@ namespace Assets.Scripts
 
         }
 
-        // Update is called once per frame
-        void Update()
+        public void NextBoardSkin() => Next(_boardPrefab, _boardSkinsPrefabs, ref _curentBoardIndex, ref _currentBoardSkinIndex, _boardConfig, MoveDirection.Right);
+        public void PreviousBoardSkin() => Next(_boardPrefab, _boardSkinsPrefabs, ref _curentBoardIndex, ref _currentBoardSkinIndex, _boardConfig, MoveDirection.Left);
+        public void NextBlockSkin() => Next(_detailPrefab, _detailSkinsPrefabs, ref _curentDetailIndex, ref _currentDetailSkinIndex, _blockConfig, MoveDirection.Right);
+        public void PreviousBlockSkin() => Next(_detailPrefab, _detailSkinsPrefabs, ref _curentDetailIndex, ref _currentDetailSkinIndex, _blockConfig, MoveDirection.Left);
+
+
+        private void Next(GameObject[] prefabsArray, Skins[] skinsPrefabsArray, ref int curentPrefabIndex, ref int curentSkinIndex, AnimationConfig animationConfig, MoveDirection moveDirection)
         {
+            prefabsArray[curentPrefabIndex].transform.DOLocalMoveX(-(int)moveDirection * animationConfig.Offset, animationConfig.Duration).SetEase(Ease.InSine);  // SetActive(false);
+
+            curentSkinIndex = (curentSkinIndex + (int)moveDirection + skinsPrefabsArray.Length) % skinsPrefabsArray.Length;
+            curentPrefabIndex = (curentPrefabIndex + (int)moveDirection + prefabsArray.Length) % prefabsArray.Length;
+            prefabsArray[curentPrefabIndex].GetComponent<Renderer>().material = skinsPrefabsArray[curentSkinIndex].Material;
+            prefabsArray[curentPrefabIndex].SetActive(true);
+            prefabsArray[curentPrefabIndex].transform.DOLocalMoveX(0, animationConfig.Duration).SetEase(Ease.OutSine).From((int)moveDirection * animationConfig.Offset);
         }
-
-        public void NextBoardSkin()
-        {
-            _boardPrefab[_curentBoardIndex].transform.DOLocalMoveX(-40, 1f).SetEase(Ease.InSine);
-
-            _currentBoardSkinIndex = (_currentBoardSkinIndex + 1) % _boardSkinCount;
-            _curentBoardIndex = (_curentBoardIndex + 1) % 2;
-            _boardPrefab[_curentBoardIndex].GetComponent<Renderer>().material = _boardSkinsPrefabs[_currentBoardSkinIndex].Material;
-            _boardPrefab[_curentBoardIndex].SetActive(true);
-            _boardPrefab[_curentBoardIndex].transform.DOLocalMoveX(0, 1f).SetEase(Ease.OutSine).From(40);
-
-            //add .SetActive(false);
-        }
-
-        public void PreviousBoardSkin()
-        {
-            _boardPrefab[_curentBoardIndex].transform.DOLocalMoveX(40, 1f).SetEase(Ease.InSine);
-
-            _currentBoardSkinIndex = (_currentBoardSkinIndex - 1 + _boardSkinCount) % _boardSkinCount;
-            _curentBoardIndex = (_curentBoardIndex - 1 + 2) % 2;
-            _boardPrefab[_curentBoardIndex].GetComponent<Renderer>().material = _boardSkinsPrefabs[_currentBoardSkinIndex].Material;
-            _boardPrefab[_curentBoardIndex].SetActive(true);
-            _boardPrefab[_curentBoardIndex].transform.DOLocalMoveX(0, 1f).SetEase(Ease.OutSine).From(-40);
-        }
-
-        public void NextBlockSkin()
-        {
-            _detailPrefab[_curentDetailIndex].transform.DOLocalMoveX(-8, 0.9f).SetEase(Ease.InSine);
-            _currentDetailSkinIndex = (_currentDetailSkinIndex + 1) % _detailSkinCount;
-            _curentDetailIndex = (_curentDetailIndex + 1) % 2;
-            _detailPrefab[_curentDetailIndex].GetComponent<Renderer>().material = _detailSkinsPrefabs[_currentDetailSkinIndex].Material;
-            _detailPrefab[_curentDetailIndex].SetActive(true);
-            _detailPrefab[_curentDetailIndex].transform.DOLocalMoveX(0, 0.9f).SetEase(Ease.OutSine).From(8);
-        }
-        
-
-        public void PreviousBlockSkin()
-        {
-            _detailPrefab[_curentDetailIndex].transform.DOLocalMoveX(8, 0.9f).SetEase(Ease.InSine);
-            _currentDetailSkinIndex = (_currentDetailSkinIndex - 1 + _detailSkinCount) % _detailSkinCount;
-            _curentDetailIndex = (_curentDetailIndex - 1 + 2) % 2;
-            _detailPrefab[_curentDetailIndex].GetComponent<Renderer>().material = _detailSkinsPrefabs[_currentDetailSkinIndex].Material;
-            _detailPrefab[_curentDetailIndex].SetActive(true);
-            _detailPrefab[_curentDetailIndex].transform.DOLocalMoveX(0, 0.9f).SetEase(Ease.OutSine).From(-8);
-        }
-
 
         public Skins GetCurrentBoardSkin()
         {
