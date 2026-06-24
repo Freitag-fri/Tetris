@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
 using UnityEngine.InputSystem.EnhancedTouch;
+using UnityEngine.PlayerLoop;
 using TouchPhase =  UnityEngine.InputSystem.TouchPhase;
 
 public struct LevelsSettings
@@ -47,7 +48,7 @@ public static class LevelManager
 }
 
 
-public class BoardController : MonoBehaviour
+public class BoardController : MonoBehaviour, IMovable
 {
     public GameObject prefabForDropDetail;
     public GameObject[] dropDetails = new GameObject[4];
@@ -92,11 +93,6 @@ public class BoardController : MonoBehaviour
 
     private Coroutine activeDetailMoveCoroutine;
 
-    [SerializeField] private Vector2 touchPossition;
-    private Camera mainCamera;
-    private Plane tablePlane;
-    private bool isTouchMove = false;
-
     private readonly IReadOnlyDictionary<int, int> pointsForLinesConfiguration = new Dictionary<int, int>
     {
         {1, pointsForLine * 1},
@@ -138,9 +134,11 @@ public class BoardController : MonoBehaviour
 
         SetupGame();
 
+        var touchInputController = GetComponent<TouchInputController>();
+        touchInputController.initialization(this, Camera.main, new Plane(Vector3.forward, Vector3.zero));
 
-        mainCamera = Camera.main;
-        tablePlane = new Plane(Vector3.forward, Vector3.zero);
+        var keyboardInputController = GetComponent<KeyboardInputController>();
+        keyboardInputController.initialization(this);
     }
 
     private void SetupGame()
@@ -202,90 +200,6 @@ public class BoardController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Touchscreen.current != null)
-        {
-            var touch = Touchscreen.current.primaryTouch;
-
-            if (touch.press.wasPressedThisFrame)
-            {
-                Vector2 screenPos = touch.position.ReadValue();
-                Ray ray = mainCamera.ScreenPointToRay(screenPos);
-
-                float enter; // Сюда запишется дистанция до плоскости
-
-                // Проверяем, пересекает ли луч нашу математическую плоскость стола
-                if (tablePlane.Raycast(ray, out enter))
-                {
-                    // Получаем точную Vector3 точку пересечения в мире Unity
-                    touchPossition = ray.GetPoint(enter);
-
-                    // Двигаем ваш объект в эту точку
-                    //detTest.transform.position = worldPos;
-                    isTouchMove = false;
-                }
-            }
-
-            // Проверяем, зажата ли точка касания в данный момент
-            if (touch.press.isPressed)
-            {
-                Vector2 screenPos = touch.position.ReadValue();
-                Ray ray = mainCamera.ScreenPointToRay(screenPos);
-
-                float enter; // Сюда запишется дистанция до плоскости
-
-                // Проверяем, пересекает ли луч нашу математическую плоскость стола
-                if (tablePlane.Raycast(ray, out enter))
-                {
-                    var currentPosition = ray.GetPoint(enter);
-                    var deltaX = currentPosition.x - touchPossition.x;
-                    if (deltaX > 1)
-                    {
-                        PressKeyD();
-                        GhostPieceDetail();
-                        touchPossition.x = currentPosition.x;
-                        isTouchMove = true;
-                    }
-                    else if (deltaX < -1)
-                    {
-                        PressKeyA();
-                        GhostPieceDetail();
-                        touchPossition.x = currentPosition.x;
-                        isTouchMove = true;
-                    }
-                }
-            }
-
-            if (touch.press.wasReleasedThisFrame)
-            {
-                Vector2 screenPos = touch.position.ReadValue();
-                Ray ray = mainCamera.ScreenPointToRay(screenPos);
-
-                float enter; // Сюда запишется дистанция до плоскости
-
-                // Проверяем, пересекает ли луч нашу математическую плоскость стола
-                if (tablePlane.Raycast(ray, out enter))
-                {
-                    var currentPosition = ray.GetPoint(enter);
-                    if (currentPosition.y - touchPossition.y < -3)
-                    {
-                        PressKeySpace();
-                        GhostPieceDetail();
-                    }
-                    else if (!isTouchMove)
-                    {
-                        PressKeyW();
-                        GhostPieceDetail();
-                    }
-                }
-
-                touchPossition = Vector2.zero;
-            }
-        }
-        else
-        {
-            //Debug.Log($"тачпад не активен");
-        }
-
         if (isCreateDetail)
         {
             CreateNewDetail();
@@ -295,6 +209,33 @@ public class BoardController : MonoBehaviour
         {
             MoveDetailController();
         }
+    }
+
+    public void Move(MoveDirection direction)
+    {
+        if (IsPause)
+            return;
+
+        switch (direction)
+        {
+            case MoveDirection.Left:
+                MoveDetailLeft();
+                break;
+            case MoveDirection.Right:
+                MoveDetailRight();
+                break;
+            case MoveDirection.Down:
+                HardDropDetail();
+                break;
+            case MoveDirection.TurnRight:
+                TurnDetailRight();
+                break;
+            case MoveDirection.TurnLeft:
+                TurnDetailLeft();
+                break;
+        }
+
+        GhostPieceDetail();
     }
 
     private void MoveDetailController()
@@ -341,37 +282,11 @@ public class BoardController : MonoBehaviour
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.D))
-        {
-            PressKeyD();
-        }
-
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            PressKeyA();
-        }
-
-        if (Input.GetKeyDown(KeyCode.W))
-        {
-            PressKeyW();
-        }
-
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            PressKeyS();
-        }
-
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            PressKeySpace();
-        }
-
         timeUntillNextStep -= Time.deltaTime;
         GhostPieceDetail();
     }
 
-    // move detail to the right
-    void PressKeyD()
+    void MoveDetailRight()
     {
         if (isHardDropping) return;
 
@@ -382,8 +297,7 @@ public class BoardController : MonoBehaviour
         }
     }
 
-    // move detail to the left
-    void PressKeyA()
+    void MoveDetailLeft()
     {
         if (isHardDropping) return;
 
@@ -394,8 +308,7 @@ public class BoardController : MonoBehaviour
         }
     }
 
-    // turn detail to the right
-    void PressKeyW()
+    void TurnDetailRight()
     {
         if (isHardDropping) return;
 
@@ -403,8 +316,7 @@ public class BoardController : MonoBehaviour
         TurnDetail(newDetailForm);
     }
 
-    // turn detail to the right
-    void PressKeyS()
+    void TurnDetailLeft()
     {
         if (isHardDropping) return;
 
@@ -412,8 +324,7 @@ public class BoardController : MonoBehaviour
         TurnDetail(newDetailForm);
     }
 
-    // Hard drop detail
-    void PressKeySpace()
+    void HardDropDetail()
     {
         if (isHardDropping) return;
 
