@@ -3990,6 +3990,30 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+--- !u!114 &1541583632
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1541583626}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4fd456ce1a7cee45a70fd6f37e4ad27, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Assets.Scripts.InputController
+--- !u!114 &1541583633
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1541583626}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e209d2ae74cc4b4a92fe36734ac1830, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Assets.Scripts.KeyboardInputController
 --- !u!1 &1557366660
 GameObject:
   m_ObjectHideFlags: 0
@@ -6696,6 +6720,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7440428824770036983, guid: e25cb25a6c431f744ac4d7476c765ca6, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1541583631}
+    - targetCorrespondingSourceObject: {fileID: 7440428824770036983, guid: e25cb25a6c431f744ac4d7476c765ca6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1541583632}
+    - targetCorrespondingSourceObject: {fileID: 7440428824770036983, guid: e25cb25a6c431f744ac4d7476c765ca6, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1541583633}
   m_SourcePrefab: {fileID: 100100000, guid: e25cb25a6c431f744ac4d7476c765ca6, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

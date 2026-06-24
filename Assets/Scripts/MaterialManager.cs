@@ -10,9 +10,6 @@ namespace Assets.Scripts
         [SerializeField] private Skins[] _boardSkinsPrefabs;
         [SerializeField] private Skins[] _detailSkinsPrefabs;
 
-        private int _boardSkinCount = 0;
-        private int _detailSkinCount = 0;
-
         private int _currentBoardSkinIndex = 0;
         private int _currentDetailSkinIndex = 0;
 
@@ -46,13 +43,11 @@ namespace Assets.Scripts
 		{
             if(_boardSkinsPrefabs != null && _boardSkinsPrefabs.Length > 0)
             {
-                _boardSkinCount = _boardSkinsPrefabs.Length;
                 _boardPrefab[_curentBoardIndex].GetComponent<Renderer>().material = _boardSkinsPrefabs[0].Material;
                 _currentBoardSkinIndex = 0;
             }
             if (_detailSkinsPrefabs != null && _detailSkinsPrefabs.Length > 0)
             {
-                _detailSkinCount = _detailSkinsPrefabs.Length;
                 _detailPrefab[_curentDetailIndex].GetComponent<Renderer>().material = _detailSkinsPrefabs[0].Material;
                 _currentDetailSkinIndex = 0;
             }
