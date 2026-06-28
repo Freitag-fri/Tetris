@@ -54,21 +54,31 @@ namespace Assets.Scripts
 
         }
 
-        public void NextBoardSkin() => Next(_boardPrefab, _boardSkinsPrefabs, ref _curentBoardIndex, ref _currentBoardSkinIndex, _boardConfig, MoveDirection.Right);
-        public void PreviousBoardSkin() => Next(_boardPrefab, _boardSkinsPrefabs, ref _curentBoardIndex, ref _currentBoardSkinIndex, _boardConfig, MoveDirection.Left);
-        public void NextBlockSkin() => Next(_detailPrefab, _detailSkinsPrefabs, ref _curentDetailIndex, ref _currentDetailSkinIndex, _blockConfig, MoveDirection.Right);
-        public void PreviousBlockSkin() => Next(_detailPrefab, _detailSkinsPrefabs, ref _curentDetailIndex, ref _currentDetailSkinIndex, _blockConfig, MoveDirection.Left);
+        public void NextBoardSkin() => RotateSkin(_boardPrefab, _boardSkinsPrefabs, ref _curentBoardIndex, ref _currentBoardSkinIndex, _boardConfig, MoveDirection.Right);
+        public void PreviousBoardSkin() => RotateSkin(_boardPrefab, _boardSkinsPrefabs, ref _curentBoardIndex, ref _currentBoardSkinIndex, _boardConfig, MoveDirection.Left);
+        public void NextBlockSkin() => RotateSkin(_detailPrefab, _detailSkinsPrefabs, ref _curentDetailIndex, ref _currentDetailSkinIndex, _blockConfig, MoveDirection.Right);
+        public void PreviousBlockSkin() => RotateSkin(_detailPrefab, _detailSkinsPrefabs, ref _curentDetailIndex, ref _currentDetailSkinIndex, _blockConfig, MoveDirection.Left);
 
 
-        private void Next(GameObject[] prefabsArray, Skins[] skinsPrefabsArray, ref int curentPrefabIndex, ref int curentSkinIndex, AnimationConfig animationConfig, MoveDirection moveDirection)
+        private void RotateSkin(GameObject[] prefabsArray, Skins[] skinsPrefabsArray, ref int currentPrefabIndex, ref int currentSkinIndex, AnimationConfig animationConfig, MoveDirection moveDirection)
         {
-            prefabsArray[curentPrefabIndex].transform.DOLocalMoveX(-(int)moveDirection * animationConfig.Offset, animationConfig.Duration).SetEase(Ease.InSine);  // SetActive(false);
+            int directionSign = (int)moveDirection;
+            int previousPrefabIndex = currentPrefabIndex;
+            prefabsArray[currentPrefabIndex].transform
+                .DOLocalMoveX(-directionSign * animationConfig.Offset, animationConfig.Duration)
+                .SetEase(Ease.InSine)
+                .OnComplete(() => prefabsArray[previousPrefabIndex].SetActive(false));
 
-            curentSkinIndex = (curentSkinIndex + (int)moveDirection + skinsPrefabsArray.Length) % skinsPrefabsArray.Length;
-            curentPrefabIndex = (curentPrefabIndex + (int)moveDirection + prefabsArray.Length) % prefabsArray.Length;
-            prefabsArray[curentPrefabIndex].GetComponent<Renderer>().material = skinsPrefabsArray[curentSkinIndex].Material;
-            prefabsArray[curentPrefabIndex].SetActive(true);
-            prefabsArray[curentPrefabIndex].transform.DOLocalMoveX(0, animationConfig.Duration).SetEase(Ease.OutSine).From((int)moveDirection * animationConfig.Offset);
+            currentSkinIndex = (currentSkinIndex + directionSign + skinsPrefabsArray.Length) % skinsPrefabsArray.Length;
+            currentPrefabIndex = (currentPrefabIndex + directionSign + prefabsArray.Length) % prefabsArray.Length;
+
+            GameObject newActivePrefab = prefabsArray[currentPrefabIndex];
+            newActivePrefab.GetComponent<Renderer>().material = skinsPrefabsArray[currentSkinIndex].Material;
+            newActivePrefab.SetActive(true);
+            newActivePrefab.transform
+                .DOLocalMoveX(0, animationConfig.Duration)
+                .SetEase(Ease.OutSine).From(directionSign * animationConfig.Offset)
+                .OnStart(() => newActivePrefab.SetActive(true));
         }
 
         public Skins GetCurrentBoardSkin()

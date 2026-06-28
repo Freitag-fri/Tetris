@@ -1,5 +1,6 @@
 using Assets.Scripts;
 using Cinemachine;
+using DG.Tweening;
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -18,6 +19,9 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject skinsMenu;
 
     [SerializeField] private GameObject skinTextObj;
+
+    [SerializeField] private Button skinBoardButton;
+    [SerializeField] private Button skinBlockButton;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -102,6 +106,12 @@ public class MenuManager : MonoBehaviour
 
     public void EnterToBoardSkins()
     {
+        skinBoardButton.transform
+            .DOScale(Vector3.one * 1.2f, 0.2f)
+            .OnComplete(() =>{ skinBoardButton.transform
+                .DOScale(Vector3.one, 0.2f);
+            });
+
         boardCamera.Priority = 3;
         blockCamera.Priority = 0;
         currentMenuStatus = MenuStatus.BoardSkins;
@@ -112,6 +122,13 @@ public class MenuManager : MonoBehaviour
 
     public void EnterToBlockSkins()
     {
+        skinBlockButton.transform
+            .DOScale(Vector3.one * 1.2f, 0.2f)
+            .OnComplete(() => {
+                skinBlockButton.transform
+                .DOScale(Vector3.one, 0.2f);
+            });
+
         blockCamera.Priority = 3;
         boardCamera.Priority = 0;
         currentMenuStatus = MenuStatus.BlockSkins;
