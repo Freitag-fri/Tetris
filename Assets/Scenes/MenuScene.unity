@@ -917,6 +917,8 @@ MonoBehaviour:
   settingsPanel: {fileID: 2095925210}
   skinsMenu: {fileID: 1136710184}
   skinTextObj: {fileID: 1102755667}
+  skinBoardButton: {fileID: 1944815124}
+  skinBlockButton: {fileID: 648176285}
   materialManager: {fileID: 309341876}
 --- !u!1 &271801800
 GameObject:
@@ -2261,7 +2263,7 @@ RectTransform:
   m_GameObject: {fileID: 648176283}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 18012526}
@@ -3251,7 +3253,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1136710185
 RectTransform:
   m_ObjectHideFlags: 0
