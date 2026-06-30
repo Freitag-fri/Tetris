@@ -441,6 +441,7 @@ public class BoardController : MonoBehaviour, IMovable
     void СheckLines()
     {
         int numberCleanLines = 0;
+        int firstFullLine = 0;
         for (int i = boardHeight - 1; i >= 0; i--)
         {
             bool isFullLine = true;
@@ -456,14 +457,15 @@ public class BoardController : MonoBehaviour, IMovable
 
             if (isFullLine)
             {
-                СleanLine(i);
-                i++; // After cleaning the line, we lower details in the board, so we need to check the same line
+                if (numberCleanLines == 0)
+                    firstFullLine = i;
                 numberCleanLines++;
             }
         }
-
-        if(numberCleanLines > 0)
+        if (numberCleanLines > 0)
         {
+            StartCoroutine(СleanLine(firstFullLine, numberCleanLines));
+
             totalNumberCleanLines += numberCleanLines;
             score += pointsForLinesConfiguration[numberCleanLines];
 
@@ -478,30 +480,43 @@ public class BoardController : MonoBehaviour, IMovable
         }
     }
 
-
-    void СleanLine(int cleaningLine)
+    IEnumerator СleanLine(int firstFullLine, int numberCleanLines)
     {
+        YieldInstruction[] destroyBlockAnumations = new YieldInstruction[numberCleanLines * boardWidth];
         for (int j = 0; j < boardWidth; j++)
         {
-            Destroy(boardPositions[cleaningLine * boardWidth + j]);
-            boardPositions[cleaningLine * boardWidth + j] = null;
+            for (int i = 0; i < numberCleanLines; i++)
+            {
+                destroyBlockAnumations[i * boardWidth + j] = boardPositions[(firstFullLine - i) * boardWidth + j].GetComponent<Block>().DestroyBlock();
+                boardPositions[(firstFullLine - i) * boardWidth + j] = null;
+            }
+            yield return new WaitForSeconds(0.05f); // Add a small delay before cleaning the lines
         }
+        foreach(YieldInstruction instruction in destroyBlockAnumations)
+            yield return instruction;
 
-        for (int k = cleaningLine - 1; k >= 0; k--)
+        MoveLinesAfterСlean(firstFullLine, numberCleanLines);
+    }
+
+    private void MoveLinesAfterСlean(int firstFullLine, int numberCleanLines)
+    {
+        for (int k = firstFullLine - numberCleanLines; k >= 0; k--)
         {
             bool isAnyDetailInLine = false;
 
             for (int j = 0; j < boardWidth; j++)
             {
-                if (boardPositions[k * boardWidth + j] != null)
+                var oldArrayPosition = k * boardWidth + j;
+                if (boardPositions[oldArrayPosition] != null)
                 {
                     isAnyDetailInLine = true;
-                    boardPositions[(k + 1) * boardWidth + j] = boardPositions[k * boardWidth + j];
-                    boardPositions[k * boardWidth + j] = null;
+                    var newArrayPossition = (k + numberCleanLines) * boardWidth + j;
+                    boardPositions[newArrayPossition] = boardPositions[oldArrayPosition];
+                    boardPositions[oldArrayPosition] = null;
 
-                    var localDetailPosition = boardPositions[(k + 1) * boardWidth + j].transform.localPosition;
-                    localDetailPosition.y = localDetailPosition.y - 1;
-                    boardPositions[(k + 1) * boardWidth + j].transform.localPosition = localDetailPosition;
+                    var localDetailPosition = boardPositions[newArrayPossition].transform.localPosition;
+                    localDetailPosition.y = localDetailPosition.y - numberCleanLines;
+                    StartCoroutine(SmoothBlockMove(boardPositions[newArrayPossition].transform, localDetailPosition, smoothMoveDuration));
                 }
             }
 
@@ -620,5 +635,20 @@ public class BoardController : MonoBehaviour, IMovable
             activeDetail.transform.localPosition = targetPosition;
             activeDetailMoveCoroutine = null;
         }
+    }
+
+    IEnumerator SmoothBlockMove(Transform blockTransform, Vector2 targetPosition, float duration)
+    {
+        float elapsedTime = 0f;
+        Vector2 startPosition = blockTransform.position;
+
+        while (elapsedTime < duration)
+        {
+            blockTransform.localPosition = Vector2.Lerp(startPosition, targetPosition, elapsedTime / duration);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        blockTransform.localPosition = targetPosition;
     }
 }

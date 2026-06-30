@@ -17,6 +17,9 @@
     <Compile Update="Assets\Scripts\GameManager.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Assets\Scripts\Block.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Assets\Scripts\TouchInputController.cs">
       <SubType>Code</SubType>
     </Compile>
