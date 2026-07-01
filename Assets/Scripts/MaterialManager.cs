@@ -91,6 +91,4 @@ namespace Assets.Scripts
             return _detailSkinsPrefabs[_currentDetailSkinIndex];
         }
     }
-}
-
-    
+}  
