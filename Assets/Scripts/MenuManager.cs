@@ -16,15 +16,10 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject menuPanel;
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private GameObject skinsMenu;
-
     [SerializeField] private GameObject skinTextObj;
 
     [SerializeField] private Button skinBoardButton;
     [SerializeField] private Button skinBlockButton;
-
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-
     [SerializeField] private MaterialManager materialManager;
 
     enum MenuStatus
@@ -53,7 +48,6 @@ public class MenuManager : MonoBehaviour
     {
         SensorNavigationSkinsMenu();
     }
-
 
     public void Play()
     {
@@ -209,7 +203,6 @@ public class MenuManager : MonoBehaviour
         if (currentMenuStatus == MenuStatus.BoardSkins)
         {
             materialManager.PreviousBoardSkin();
-
         }
         else if (currentMenuStatus == MenuStatus.BlockSkins)
         {

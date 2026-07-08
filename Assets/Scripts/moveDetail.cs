@@ -1,31 +1,10 @@
-using System.Collections;
 using UnityEngine;
 
-public class moveDetail : MonoBehaviour
+public class MoveDetail : MonoBehaviour
 {
     [SerializeField] public Detail detailScript;
 
     [SerializeField] private GameObject detCenter;
-
-    //private Vector3 offset = new Vector3(-1f, 1f, 0f);
-
-
-
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        //Vector3 pivotPoint = transform.TransformPoint(offset);
-
-        //transform.RotateAround(detCenter.transform.position, Vector3.forward, 50 * Time.deltaTime);
-            //var newCenter = activeDetail.transform.localPosition + new Vector3(2, -2, 0);
-            //activeDetail.transform.RotateAround(newCenter, Vector3.forward, 50 * Time.deltaTime);
-    }
 
     public void turnDetail(bool[] newGameObjectPositions)
     {

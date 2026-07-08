@@ -1,9 +1,5 @@
 using System.Linq;
 using UnityEngine;
-//using System.Collections;
-
-
-[System.Serializable]
 
 public abstract class Detail: MonoBehaviour
 {
@@ -39,7 +35,6 @@ public abstract class Detail: MonoBehaviour
     public void rebuildingDetail()
     {
         var childPositionsInArray = getChildsPossitionsInArray();
-        //StartCoroutine(SmoothRotation(childPositionsInArray, 0.05f));
         int childPositionsInArrayLength = childPositionsInArray.Length;
         for (int i = 0; i < childPositionsInArrayLength; i++)
         {
@@ -62,7 +57,7 @@ public abstract class Detail: MonoBehaviour
         //var childPossitions = from i in Enumerable.Range(0, GameObjectPositions.Length)
         //                      where GameObjectPositions[i]
         //                      select i;
-        return childPossitions.ToArray()    ;
+        return childPossitions.ToArray();
     }
 
     //IEnumerator SmoothRotation(int[] newChildPossitionsInArray, float duration)

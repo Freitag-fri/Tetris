@@ -5,11 +5,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Controls;
-using UnityEngine.InputSystem.EnhancedTouch;
-using UnityEngine.PlayerLoop;
-using TouchPhase =  UnityEngine.InputSystem.TouchPhase;
 
 public struct LevelsSettings
 {
@@ -312,7 +307,7 @@ public class BoardController : MonoBehaviour, IMovable
     {
         if (isHardDropping) return;
 
-        var newDetailForm = activeDetail.GetComponent<moveDetail>().getPossitionForTurnRight();
+        var newDetailForm = activeDetail.GetComponent<MoveDetail>().getPossitionForTurnRight();
         TurnDetail(newDetailForm);
     }
 
@@ -320,7 +315,7 @@ public class BoardController : MonoBehaviour, IMovable
     {
         if (isHardDropping) return;
 
-        var newDetailForm = activeDetail.GetComponent<moveDetail>().getPossitionForTurnLeft();
+        var newDetailForm = activeDetail.GetComponent<MoveDetail>().getPossitionForTurnLeft();
         TurnDetail(newDetailForm);
     }
 
@@ -373,7 +368,7 @@ public class BoardController : MonoBehaviour, IMovable
     private void ChangeDetailRotation(bool[] newDetailForm)
     {
         lastActiveDetailRotation = newDetailForm;
-        activeDetail.GetComponent<moveDetail>().turnDetail(newDetailForm);
+        activeDetail.GetComponent<MoveDetail>().turnDetail(newDetailForm);
     }
     private void ChangeDetailPosition(Vector2 newDetailPosition)
     {

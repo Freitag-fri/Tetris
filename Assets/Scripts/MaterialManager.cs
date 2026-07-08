@@ -51,14 +51,12 @@ namespace Assets.Scripts
                 _detailPrefab[_curentDetailIndex].GetComponent<Renderer>().material = _detailSkinsPrefabs[0].Material;
                 _currentDetailSkinIndex = 0;
             }
-
         }
 
         public void NextBoardSkin() => RotateSkin(_boardPrefab, _boardSkinsPrefabs, ref _curentBoardIndex, ref _currentBoardSkinIndex, _boardConfig, MoveDirection.Right);
         public void PreviousBoardSkin() => RotateSkin(_boardPrefab, _boardSkinsPrefabs, ref _curentBoardIndex, ref _currentBoardSkinIndex, _boardConfig, MoveDirection.Left);
         public void NextBlockSkin() => RotateSkin(_detailPrefab, _detailSkinsPrefabs, ref _curentDetailIndex, ref _currentDetailSkinIndex, _blockConfig, MoveDirection.Right);
         public void PreviousBlockSkin() => RotateSkin(_detailPrefab, _detailSkinsPrefabs, ref _curentDetailIndex, ref _currentDetailSkinIndex, _blockConfig, MoveDirection.Left);
-
 
         private void RotateSkin(GameObject[] prefabsArray, Skins[] skinsPrefabsArray, ref int currentPrefabIndex, ref int currentSkinIndex, AnimationConfig animationConfig, MoveDirection moveDirection)
         {

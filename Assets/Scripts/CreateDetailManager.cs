@@ -1,12 +1,9 @@
-﻿using System.Collections;
-using UnityEngine;
-using UnityEngine.UIElements;
+﻿using UnityEngine;
 
 namespace Assets.Scripts
 {
 	public class CreateDetailManager : MonoBehaviour
 	{
-
         [SerializeField] private GameObject[] prefabDetails; // todo check is empty in start()
         [SerializeField] private GameObject nextDetailPosition;
         
