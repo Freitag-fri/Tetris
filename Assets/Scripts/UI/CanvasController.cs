@@ -5,19 +5,6 @@ using DG.Tweening;
 
 namespace Assets.Scripts
 {
-    public struct StatisticParams
-    {
-        public StatisticParams (int score, int totalNumberCleanLines, int gameLevel)
-        {
-            this.score = score;
-            this.totalNumberCleanLines = totalNumberCleanLines;
-            this.gameLevel = gameLevel;
-        }
-        public int score;
-        public int totalNumberCleanLines;
-        public int gameLevel;
-    }
-
     public class CanvasController : MonoBehaviour
     {
         [SerializeField] private GameObject gameCanvas; // for game over screen

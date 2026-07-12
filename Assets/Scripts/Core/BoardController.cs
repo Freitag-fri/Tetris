@@ -2,7 +2,6 @@
 using Assets.Scripts;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Scripts
@@ -15,7 +14,6 @@ namespace Assets.Scripts
         public bool isCreateDetail;
         public event Action CreateDetailEvent;
         [SerializeField] private GameObject activeDetail;
-        Vector2 lastActiveDetailPosition;
         private Vector2 targetPosition;
         public Vector2 TargetPosition
         {
@@ -44,21 +42,11 @@ namespace Assets.Scripts
 
         float timeUntillNextStep;
         [SerializeField] private float stepPeriod;
-        [SerializeField] private int score;
-        private const int pointsForLine = 200;
-        [SerializeField] private int totalNumberCleanLines = 0;
+        private readonly MatchProgress matchProgress = new MatchProgress();
 
         [SerializeField] private CanvasController canvasController;
 
         private Coroutine activeDetailMoveCoroutine;
-
-        private readonly IReadOnlyDictionary<int, int> pointsForLinesConfiguration = new Dictionary<int, int>
-        {
-            {1, pointsForLine * 1},
-            {2, pointsForLine * 2},
-            {3, pointsForLine * 4},
-            {4, pointsForLine * 6}
-        };
 
         private bool _isPause = false;
         public bool IsPause 
@@ -104,16 +92,14 @@ namespace Assets.Scripts
         {
             canvasController.SetStartGameCanvas();
             activeDetail = null;
-            lastActiveDetailPosition = Vector2.zero;
             targetPosition = Vector2.zero;
-            score = 0;
-            totalNumberCleanLines = 0;
+            matchProgress.Reset();
 
-            var levelSettings = LevelProgression.GetLevelSettingsByClearLines(totalNumberCleanLines);
+            var levelSettings = matchProgress.CurrentLevel;
             stepPeriod = levelSettings.stepPeriod;
             smoothMoveDuration = stepPeriod / 5;
             timeUntillNextStep = stepPeriod;
-            canvasController.SetStatisticParams(new StatisticParams(score, totalNumberCleanLines, levelSettings.level));
+            canvasController.SetStatisticParams(matchProgress.ToStatisticParams());
 
             IsPause = false;
             isCreateDetail = true;
@@ -140,8 +126,7 @@ namespace Assets.Scripts
             StopAllCoroutines();
             IsPause = true;
 
-            var levelSettings = LevelProgression.GetLevelSettingsByClearLines(totalNumberCleanLines);
-            canvasController.SetResoultGameCanvas((new StatisticParams(score, totalNumberCleanLines, levelSettings.level)));
+            canvasController.SetResoultGameCanvas(matchProgress.ToStatisticParams());
         }
 
         private void PauseGame()
@@ -425,17 +410,14 @@ namespace Assets.Scripts
             {
                 StartCoroutine(СleanLine(firstFullLine, numberCleanLines));
 
-                totalNumberCleanLines += numberCleanLines;
-                score += pointsForLinesConfiguration[numberCleanLines];
-
-                var levelSettings = LevelProgression.GetLevelSettingsByClearLines(totalNumberCleanLines);
+                var levelSettings = matchProgress.RegisterClearedLines(numberCleanLines);
                 if(levelSettings.stepPeriod != stepPeriod)
                 {
                     stepPeriod = levelSettings.stepPeriod;
                     smoothMoveDuration = stepPeriod / 4;
                 }
 
-                canvasController.SetStatisticParams(new StatisticParams(score, totalNumberCleanLines, levelSettings.level));
+                canvasController.SetStatisticParams(matchProgress.ToStatisticParams());
             }
         }
 
@@ -510,7 +492,6 @@ namespace Assets.Scripts
             bool[] currentNewGameObjectPositions = newDetailComponent.GameObjectPositions;
             var currentNewDetailPosition = activeDetail.transform.localPosition;
 
-            lastActiveDetailPosition = currentNewDetailPosition;
             targetPosition = currentNewDetailPosition;
             lastActiveDetailRotation = currentNewGameObjectPositions;
 
