@@ -1,16 +1,29 @@
 using UnityEngine;
 
-public class O_object : MonoBehaviour
+public class O_object : Detail
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public override bool[] GameObjectPositions
     {
-        
+        get; set;
     }
 
-    // Update is called once per frame
-    void Update()
+    public override GameObject[] ChildObjects
     {
-        
+        get; protected set;
+    }
+
+    public override int ChildCount
+    {
+        get; protected set;
+    }
+
+    public override void InitGameObjectPositions()
+    {
+        GameObjectPositions = new bool[16] {
+                                false, false, false, false,
+                                false, true, true, false,
+                                false, true, true, false,
+                                false, false, false, false
+        };
     }
 }

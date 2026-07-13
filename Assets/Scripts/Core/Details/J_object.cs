@@ -17,15 +17,6 @@ public class J_object : Detail
         get; protected set;
     }
 
-    void Start()
-    {
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-    }
-
     public override void InitGameObjectPositions()
     {
         GameObjectPositions = new bool[16] {
