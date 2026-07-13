@@ -10,13 +10,13 @@ namespace Assets.Scripts
 		private GameObject nextDetail;
         private int prefabDetailsCount;
 
-        [SerializeField] private Material blockMaterioal;
-        [SerializeField] private Material boardMaterioal;
+        [SerializeField] private Material blockMaterial;
+        [SerializeField] private Material boardMaterial;
 
         private void Awake()
         {
-            blockMaterioal.mainTexture = GameManager.Instance.BlockMaterial.mainTexture;
-            boardMaterioal.mainTexture = GameManager.Instance.BoardMaterial.mainTexture;
+            blockMaterial.mainTexture = GameManager.Instance.BlockMaterial.mainTexture;
+            boardMaterial.mainTexture = GameManager.Instance.BoardMaterial.mainTexture;
         }
 
         // Use this for initialization

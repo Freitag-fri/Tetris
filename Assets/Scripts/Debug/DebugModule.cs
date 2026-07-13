@@ -6,22 +6,22 @@ namespace Assets.Scripts
 	{
         public BoardController boardController;
 
-        public Material materialEmptyPossition;
-        public Material materialFullPossition;
+        public Material materialEmptyPosition;
+        public Material materialFullPosition;
         public GameObject prefabForDebug;
         public GameObject[] boardDebugingDetails = new GameObject[200]; // get
 
         // Use this for initialization
         void Start()
 		{
-            GameObject pointPossition = new GameObject("pointPossition"); /*Instantiate(prefabDetails[2], new Vector2(15, 0));*/
-            pointPossition.transform.position = new Vector2(15, 0);
+            GameObject pointPosition = new GameObject("pointPosition"); /*Instantiate(prefabDetails[2], new Vector2(15, 0));*/
+            pointPosition.transform.position = new Vector2(15, 0);
             int boardPositionsLength = boardDebugingDetails.Length;
             for (int i = 0; i < boardPositionsLength; i++)
             {
                 int row = i / 10;
                 int col = i % 10;
-                GameObject newObject = Instantiate(prefabForDebug, pointPossition.transform/*, new Vector2(row, col)*/);
+                GameObject newObject = Instantiate(prefabForDebug, pointPosition.transform/*, new Vector2(row, col)*/);
                 newObject.transform.localPosition = new Vector2(col, -row);
                 boardDebugingDetails[i] = newObject;
             }
@@ -37,11 +37,11 @@ namespace Assets.Scripts
             {
                 if (boardPositions[i] != null)
                 {
-                    boardDebugingDetails[i].GetComponent<Renderer>().material = materialFullPossition;
+                    boardDebugingDetails[i].GetComponent<Renderer>().material = materialFullPosition;
                 }
                 else
                 {
-                    boardDebugingDetails[i].GetComponent<Renderer>().material = materialEmptyPossition;
+                    boardDebugingDetails[i].GetComponent<Renderer>().material = materialEmptyPosition;
                 }
             }
         }

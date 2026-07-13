@@ -8,7 +8,7 @@ namespace Assets.Scripts
         private const int SwipeThresholdPixels = 80;
 
         IMovable _movable;
-        private Vector2 touchPossition;
+        private Vector2 touchPosition;
         private Camera mainCamera;
         private Plane tablePlane;
         private bool isTouchMove = false;
@@ -48,13 +48,13 @@ namespace Assets.Scripts
         private void HandleWorldTouchStart(Vector2 screenPos)
         {
             (bool success, Vector2 point) = GetWorldPoint(screenPos);
-            touchPossition = success ? point : Vector2.zero;
+            touchPosition = success ? point : Vector2.zero;
             isTouchMove = false;
         }
 
         private void HandlePixelTouchStart(Vector2 screenPos)
         {
-            touchPossition = screenPos;
+            touchPosition = screenPos;
         }
 
         private void HandleWorldTouchDrag(Vector2 screenPos)
@@ -63,17 +63,17 @@ namespace Assets.Scripts
             if (!success)
                 return;
 
-            var deltaX = point.x - touchPossition.x;
+            var deltaX = point.x - touchPosition.x;
             if (deltaX > 1)
             {
                 _movable.Move(MoveDirection.Right);
-                touchPossition.x = point.x;
+                touchPosition.x = point.x;
                 isTouchMove = true;
             }
             else if (deltaX < -1)
             {
                 _movable.Move(MoveDirection.Left);
-                touchPossition.x = point.x;
+                touchPosition.x = point.x;
                 isTouchMove = true;
             }
         }
@@ -83,7 +83,7 @@ namespace Assets.Scripts
             (bool success, Vector2 point) = GetWorldPoint(screenPos);
             if (success)
             {
-                if (point.y - touchPossition.y < -3)
+                if (point.y - touchPosition.y < -3)
                 {
                     _movable.Move(MoveDirection.Down);
                 }
@@ -93,22 +93,22 @@ namespace Assets.Scripts
                 }
             }
 
-            touchPossition = Vector2.zero;
+            touchPosition = Vector2.zero;
         }
 
         private void HandlePixelTouchEnd(Vector2 screenPos)
         {
-            if (touchPossition == Vector2.zero)
+            if (touchPosition == Vector2.zero)
                 return;
 
-            if (screenPos.x > touchPossition.x + SwipeThresholdPixels)
+            if (screenPos.x > touchPosition.x + SwipeThresholdPixels)
             {
                 _movable.Move(MoveDirection.TurnRight);
             }
-            else if (screenPos.x < touchPossition.x - SwipeThresholdPixels)
+            else if (screenPos.x < touchPosition.x - SwipeThresholdPixels)
             {
                 _movable.Move(MoveDirection.TurnLeft);
-                touchPossition = Vector2.zero;
+                touchPosition = Vector2.zero;
             }
         }
 

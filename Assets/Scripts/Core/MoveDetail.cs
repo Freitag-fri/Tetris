@@ -12,7 +12,7 @@ public class MoveDetail : MonoBehaviour
         detailScript.RebuildingDetail();
     }
 
-    public bool[] GetPossitionForTurnRight()
+    public bool[] GetPositionForTurnRight()
     {
         bool[] newGameObjectPositions = new bool[16]; // change 16 to gameObjectPositions.Length
         for (int i = 0; i < 16; i++)
@@ -27,7 +27,7 @@ public class MoveDetail : MonoBehaviour
         return newGameObjectPositions;
     }
 
-    public bool[] GetPossitionForTurnLeft()
+    public bool[] GetPositionForTurnLeft()
     {
         bool[] newGameObjectPositions = new bool[16]; // change 16 to gameObjectPositions.Length
         for (int i = 0; i < 16; i++)

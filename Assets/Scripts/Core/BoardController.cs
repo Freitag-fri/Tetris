@@ -40,7 +40,7 @@ namespace Assets.Scripts
         private const int boardSize = boardWidth * boardHeight; //200
         public GameObject[] boardPositions = new GameObject[boardSize];
 
-        float timeUntillNextStep;
+        float timeUntilNextStep;
         [SerializeField] private float stepPeriod;
         private readonly MatchProgress matchProgress = new MatchProgress();
 
@@ -98,7 +98,7 @@ namespace Assets.Scripts
             var levelSettings = matchProgress.CurrentLevel;
             stepPeriod = levelSettings.stepPeriod;
             smoothMoveDuration = stepPeriod / 5;
-            timeUntillNextStep = stepPeriod;
+            timeUntilNextStep = stepPeriod;
             canvasController.SetStatisticParams(matchProgress.ToStatisticParams());
 
             IsPause = false;
@@ -126,7 +126,7 @@ namespace Assets.Scripts
             StopAllCoroutines();
             IsPause = true;
 
-            canvasController.SetResoultGameCanvas(matchProgress.ToStatisticParams());
+            canvasController.SetResultGameCanvas(matchProgress.ToStatisticParams());
         }
 
         private void PauseGame()
@@ -187,13 +187,13 @@ namespace Assets.Scripts
             if (activeDetail == null)
             {  return; }
             
-            if (timeUntillNextStep <= 0)
+            if (timeUntilNextStep <= 0)
             {
                 Vector2 newDetailPosition = targetPosition + Vector2.down;
                 if (CheckNewDetailPosition(newDetailPosition, lastActiveDetailRotation))
                 {
                     TargetPosition = newDetailPosition;
-                    timeUntillNextStep = stepPeriod;
+                    timeUntilNextStep = stepPeriod;
                 }
                 else
                 {
@@ -201,8 +201,8 @@ namespace Assets.Scripts
                     var detailChildCount = activeDetail.transform.childCount;
                     for (int i = 0; i < detailChildCount; i++)
                     {
-                        var childLocalPossition = activeDetail.transform.GetChild(i).gameObject.transform.localPosition;
-                        int row = ((int)currentDetailPosition.y + (int)childLocalPossition.y);
+                        var childLocalPosition = activeDetail.transform.GetChild(i).gameObject.transform.localPosition;
+                        int row = ((int)currentDetailPosition.y + (int)childLocalPosition.y);
                         if (row > 0)
                         {
                             FinishMatch();
@@ -225,7 +225,7 @@ namespace Assets.Scripts
                 }
             }
 
-            timeUntillNextStep -= Time.deltaTime;
+            timeUntilNextStep -= Time.deltaTime;
             GhostPieceDetail();
         }
 
@@ -255,7 +255,7 @@ namespace Assets.Scripts
         {
             if (isHardDropping) return;
 
-            var newDetailForm = activeDetail.GetComponent<MoveDetail>().GetPossitionForTurnRight();
+            var newDetailForm = activeDetail.GetComponent<MoveDetail>().GetPositionForTurnRight();
             TurnDetail(newDetailForm);
         }
 
@@ -263,7 +263,7 @@ namespace Assets.Scripts
         {
             if (isHardDropping) return;
 
-            var newDetailForm = activeDetail.GetComponent<MoveDetail>().GetPossitionForTurnLeft();
+            var newDetailForm = activeDetail.GetComponent<MoveDetail>().GetPositionForTurnLeft();
             TurnDetail(newDetailForm);
         }
 
@@ -274,7 +274,7 @@ namespace Assets.Scripts
             int countEmptyRows = GetCountEmptyRowsUnderDetail();
             var newDetailPosition = targetPosition;
             newDetailPosition.y = newDetailPosition.y - countEmptyRows;
-            timeUntillNextStep = smoothMoveDuration;
+            timeUntilNextStep = smoothMoveDuration;
 
             if (CheckNewDetailPosition(newDetailPosition, lastActiveDetailRotation))
             {
@@ -333,9 +333,9 @@ namespace Assets.Scripts
             for (int i = 0; i < detailChildCount; i++)
             {
                 newCountEmptyRows = 0;
-                var childLocalPossition = activeDetail.transform.GetChild(i).gameObject.transform.localPosition;
-                int col = (int)currentNewDetailPosition.x + (int)childLocalPossition.x;
-                int row = ((int)currentNewDetailPosition.y + (int)childLocalPossition.y) * -1;
+                var childLocalPosition = activeDetail.transform.GetChild(i).gameObject.transform.localPosition;
+                int col = (int)currentNewDetailPosition.x + (int)childLocalPosition.x;
+                int row = ((int)currentNewDetailPosition.y + (int)childLocalPosition.y) * -1;
 
                 for (int j = row +1; j <= boardHeight + 1; j++)
                 {
@@ -360,9 +360,9 @@ namespace Assets.Scripts
 
             for (int i = 0; i < detailChildCount; i++)
             {
-                var childLocalPossition = activeDetail.transform.GetChild(i).gameObject.transform.localPosition;
-                int col = (int)currentNewDetailPosition.x + (int)childLocalPossition.x;
-                int row = (int)currentNewDetailPosition.y + (int)childLocalPossition.y - countEmptyRows;
+                var childLocalPosition = activeDetail.transform.GetChild(i).gameObject.transform.localPosition;
+                int col = (int)currentNewDetailPosition.x + (int)childLocalPosition.x;
+                int row = (int)currentNewDetailPosition.y + (int)childLocalPosition.y - countEmptyRows;
                 dropDetails[i].transform.localPosition = new Vector3(col, row, 0.05f);
             }
         }
@@ -422,17 +422,17 @@ namespace Assets.Scripts
 
         IEnumerator CleanLine(int firstFullLine, int numberCleanLines)
         {
-            YieldInstruction[] destroyBlockAnumations = new YieldInstruction[numberCleanLines * boardWidth];
+            YieldInstruction[] destroyBlockAnimations = new YieldInstruction[numberCleanLines * boardWidth];
             for (int j = 0; j < boardWidth; j++)
             {
                 for (int i = 0; i < numberCleanLines; i++)
                 {
-                    destroyBlockAnumations[i * boardWidth + j] = boardPositions[(firstFullLine - i) * boardWidth + j].GetComponent<Block>().DestroyBlock();
+                    destroyBlockAnimations[i * boardWidth + j] = boardPositions[(firstFullLine - i) * boardWidth + j].GetComponent<Block>().DestroyBlock();
                     boardPositions[(firstFullLine - i) * boardWidth + j] = null;
                 }
                 yield return new WaitForSeconds(0.05f); // Add a small delay before cleaning the lines
             }
-            foreach(YieldInstruction instruction in destroyBlockAnumations)
+            foreach(YieldInstruction instruction in destroyBlockAnimations)
                 yield return instruction;
 
             MoveLinesAfterClean(firstFullLine, numberCleanLines);
@@ -450,13 +450,13 @@ namespace Assets.Scripts
                     if (boardPositions[oldArrayPosition] != null)
                     {
                         isAnyDetailInLine = true;
-                        var newArrayPossition = (k + numberCleanLines) * boardWidth + j;
-                        boardPositions[newArrayPossition] = boardPositions[oldArrayPosition];
+                        var newArrayPosition = (k + numberCleanLines) * boardWidth + j;
+                        boardPositions[newArrayPosition] = boardPositions[oldArrayPosition];
                         boardPositions[oldArrayPosition] = null;
 
-                        var localDetailPosition = boardPositions[newArrayPossition].transform.localPosition;
+                        var localDetailPosition = boardPositions[newArrayPosition].transform.localPosition;
                         localDetailPosition.y = localDetailPosition.y - numberCleanLines;
-                        StartCoroutine(SmoothBlockMove(boardPositions[newArrayPossition].transform, localDetailPosition, smoothMoveDuration));
+                        StartCoroutine(SmoothBlockMove(boardPositions[newArrayPosition].transform, localDetailPosition, smoothMoveDuration));
                     }
                 }
 
@@ -477,15 +477,15 @@ namespace Assets.Scripts
             var detailChildCount = activeDetail.transform.childCount;
             for (int i = 0; i < detailChildCount; i++)
             {
-                var childLocalPossition = activeDetail.transform.GetChild(i).gameObject.transform.localPosition;
-                if ((int)childLocalPossition.y < lowestDetailPoint)
+                var childLocalPosition = activeDetail.transform.GetChild(i).gameObject.transform.localPosition;
+                if ((int)childLocalPosition.y < lowestDetailPoint)
                 {
-                    lowestDetailPoint = (int)childLocalPossition.y;
+                    lowestDetailPoint = (int)childLocalPosition.y;
                 }
             }
 
             activeDetail.transform.localPosition = new Vector2(boardWidth/2, (lowestDetailPoint * -1) + 1);
-            timeUntillNextStep = stepPeriod;
+            timeUntilNextStep = stepPeriod;
 
             var newDetailComponent = activeDetail.GetComponent<Detail>();
             bool[] currentNewGameObjectPositions = newDetailComponent.GameObjectPositions;
@@ -500,7 +500,7 @@ namespace Assets.Scripts
             CreateDetailEvent?.Invoke();
         }
 
-        bool CheckNewDetailPosition(Vector2 detailPossition, bool[] detail)
+        bool CheckNewDetailPosition(Vector2 detailPosition, bool[] detail)
         {
             var localBoardPositions = boardPositions;
 
@@ -511,8 +511,8 @@ namespace Assets.Scripts
                     int localRow = i / 4;
                     int localCol = i % 4;
 
-                    int col = (int)detailPossition.x + localCol;
-                    int row = ((int)detailPossition.y * -1 + localRow);
+                    int col = (int)detailPosition.x + localCol;
+                    int row = ((int)detailPosition.y * -1 + localRow);
 
                     if (col < 0 || col >= boardWidth)
                     {
@@ -527,7 +527,7 @@ namespace Assets.Scripts
                     // the new position is outside the board or the position is already occupied
                     if (newArrayPosition >= boardSize || localBoardPositions[newArrayPosition] != null)
                     {
-                        Debug.Log("The new position is outside the board or the position is already occupied. Possition: " + newArrayPosition);
+                        Debug.Log("The new position is outside the board or the position is already occupied. Position: " + newArrayPosition);
                         return false;
                     }
                 }
@@ -542,9 +542,9 @@ namespace Assets.Scripts
             var detailChildCount = activeDetail.transform.childCount;
             for (int i = 0; i < detailChildCount; i++)
             {
-                var childLocalPossition = activeDetail.transform.GetChild(i).gameObject.transform.localPosition;
-                int col = (int)currentDetailPosition.x + (int)childLocalPossition.x;
-                int row = ((int)currentDetailPosition.y + (int)childLocalPossition.y) * -1;
+                var childLocalPosition = activeDetail.transform.GetChild(i).gameObject.transform.localPosition;
+                int col = (int)currentDetailPosition.x + (int)childLocalPosition.x;
+                int row = ((int)currentDetailPosition.y + (int)childLocalPosition.y) * -1;
                 if (row < 0) // block is under the board, we don't need to add it to the board positions because we will add it when it will be on the board
                     continue;
 

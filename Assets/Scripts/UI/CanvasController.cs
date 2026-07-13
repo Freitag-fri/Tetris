@@ -9,9 +9,9 @@ namespace Assets.Scripts
     {
         [SerializeField] private GameObject gameCanvas; // for game over screen
         [SerializeField] private GameObject pauseGameCanvas; // for pause game screen
-        [SerializeField] private GameObject resoultGameCanvas; // for resoult game screen
-        [SerializeField] private GameObject shadowCanvas; // for shadowing background when pause or resoult game screen is active
-        [SerializeField] private GameObject resoultGamePanel;
+        [SerializeField] private GameObject resultGameCanvas; // for result game screen
+        [SerializeField] private GameObject shadowCanvas; // for shadowing background when pause or result game screen is active
+        [SerializeField] private GameObject resultGamePanel;
         [SerializeField] private GameObject newGameButton;
 
         [SerializeField] private Image shadowObject;
@@ -27,28 +27,28 @@ namespace Assets.Scripts
         private const float ShadowFadeOutDuration = 0.1f;
         private const float ShadowFadeInStartAlpha = 0.5f;
         private const float ShadowFadeInEndAlpha = 0.8f;
-        private const float ResoultPanelAnimDuration = 0.2f;
+        private const float ResultPanelAnimDuration = 0.2f;
 
         public void SetStartGameCanvas()
         {
-            SetActiveCanvases(game: true, pause: false, resoult: false);
+            SetActiveCanvases(game: true, pause: false, result: false);
             HideShadow();
         }
 
         public void SetPauseGameCanvas()
         {
-            SetActiveCanvases(game: false, pause: true, resoult: false);
+            SetActiveCanvases(game: false, pause: true, result: false);
             ShowShadow();
         }
 
-        public void SetResoultGameCanvas(StatisticParams statisticParams)
+        public void SetResultGameCanvas(StatisticParams statisticParams)
         {
             finaleScore.text = $"Score: {statisticParams.score}";
             finaleLevel.text = $"Level: {statisticParams.gameLevel}";
             finaleLines.text = $"Lines: {statisticParams.totalNumberCleanLines}";
 
-            SetActiveCanvases(game: false, pause: false, resoult: true);
-            PlayResoultPanelAnimation();
+            SetActiveCanvases(game: false, pause: false, result: true);
+            PlayResultPanelAnimation();
         }
 
         public void SetStatisticParams(StatisticParams statisticParams)
@@ -58,11 +58,11 @@ namespace Assets.Scripts
             textGameLevel.text = statisticParams.gameLevel.ToString();
         }
 
-        private void SetActiveCanvases(bool game, bool pause, bool resoult)
+        private void SetActiveCanvases(bool game, bool pause, bool result)
         {
             gameCanvas.SetActive(game);
             pauseGameCanvas.SetActive(pause);
-            resoultGameCanvas.SetActive(resoult);
+            resultGameCanvas.SetActive(result);
         }
 
         private void ShowShadow()
@@ -86,15 +86,15 @@ namespace Assets.Scripts
                 .OnComplete(() => shadowCanvas.SetActive(false));
         }
 
-        private void PlayResoultPanelAnimation()
+        private void PlayResultPanelAnimation()
         {
             DOTween.Sequence()
-                .Append(resoultGamePanel.transform
-                    .DOScale(Vector3.one, ResoultPanelAnimDuration)
+                .Append(resultGamePanel.transform
+                    .DOScale(Vector3.one, ResultPanelAnimDuration)
                     .From(Vector3.one * 0.5f)
                     .SetEase(Ease.OutBack))
                 .Append(newGameButton.transform
-                    .DOScale(Vector3.one, ResoultPanelAnimDuration)
+                    .DOScale(Vector3.one, ResultPanelAnimDuration)
                     .From(Vector3.zero)
                     .SetEase(Ease.OutBack));
         }
