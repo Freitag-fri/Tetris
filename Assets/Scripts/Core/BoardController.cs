@@ -558,7 +558,7 @@ namespace Assets.Scripts
             if (!activeDetail) yield break;
 
             float elapsedTime = 0f;
-            Vector2 startPosition = activeDetail.transform.position;
+            Vector2 startPosition = activeDetail.transform.localPosition;
 
             while (elapsedTime < duration)
             {
@@ -580,7 +580,7 @@ namespace Assets.Scripts
         IEnumerator SmoothBlockMove(Transform blockTransform, Vector2 targetPosition, float duration)
         {
             float elapsedTime = 0f;
-            Vector2 startPosition = blockTransform.position;
+            Vector2 startPosition = blockTransform.localPosition;
 
             while (elapsedTime < duration)
             {
