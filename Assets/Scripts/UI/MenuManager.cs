@@ -47,7 +47,7 @@ public class MenuManager : MonoBehaviour, IMovable
         if (touchInputController == null)
             touchInputController = gameObject.AddComponent<TouchInputController>();
 
-        touchInputController.initialization(this);
+        touchInputController.Initialization(this);
         touchInputController.enabled = false;
     }
 

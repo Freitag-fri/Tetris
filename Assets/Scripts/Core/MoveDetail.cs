@@ -6,13 +6,13 @@ public class MoveDetail : MonoBehaviour
 
     [SerializeField] private GameObject detCenter;
 
-    public void turnDetail(bool[] newGameObjectPositions)
+    public void TurnDetail(bool[] newGameObjectPositions)
     {
         detailScript.GameObjectPositions = newGameObjectPositions;
-        detailScript.rebuildingDetail();
+        detailScript.RebuildingDetail();
     }
 
-    public bool[] getPossitionForTurnRight()
+    public bool[] GetPossitionForTurnRight()
     {
         bool[] newGameObjectPositions = new bool[16]; // change 16 to gameObjectPositions.Length
         for (int i = 0; i < 16; i++)
@@ -27,7 +27,7 @@ public class MoveDetail : MonoBehaviour
         return newGameObjectPositions;
     }
 
-    public bool[] getPossitionForTurnLeft()
+    public bool[] GetPossitionForTurnLeft()
     {
         bool[] newGameObjectPositions = new bool[16]; // change 16 to gameObjectPositions.Length
         for (int i = 0; i < 16; i++)

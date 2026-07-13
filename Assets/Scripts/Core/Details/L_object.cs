@@ -19,7 +19,7 @@ public class L_object : Detail
         get; protected set;
     }
 
-    public override void initGameObjectPositions()
+    public override void InitGameObjectPositions()
     {
         GameObjectPositions = new bool[16] {
                                 false, false, false, false,

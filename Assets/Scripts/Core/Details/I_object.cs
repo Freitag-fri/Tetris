@@ -26,7 +26,7 @@ public class I_object : Detail
     {
     }
 
-    public override void initGameObjectPositions()
+    public override void InitGameObjectPositions()
     {
         GameObjectPositions = new bool[16] {
                                 false, true, false, false,

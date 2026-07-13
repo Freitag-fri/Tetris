@@ -82,10 +82,10 @@ namespace Assets.Scripts
             SetupGame();
 
             var touchInputController = GetComponent<TouchInputController>();
-            touchInputController.initialization(this, Camera.main, new Plane(Vector3.forward, Vector3.zero));
+            touchInputController.Initialization(this, Camera.main, new Plane(Vector3.forward, Vector3.zero));
 
             var keyboardInputController = GetComponent<KeyboardInputController>();
-            keyboardInputController.initialization(this);
+            keyboardInputController.Initialization(this);
         }
 
         private void SetupGame()
@@ -255,7 +255,7 @@ namespace Assets.Scripts
         {
             if (isHardDropping) return;
 
-            var newDetailForm = activeDetail.GetComponent<MoveDetail>().getPossitionForTurnRight();
+            var newDetailForm = activeDetail.GetComponent<MoveDetail>().GetPossitionForTurnRight();
             TurnDetail(newDetailForm);
         }
 
@@ -263,7 +263,7 @@ namespace Assets.Scripts
         {
             if (isHardDropping) return;
 
-            var newDetailForm = activeDetail.GetComponent<MoveDetail>().getPossitionForTurnLeft();
+            var newDetailForm = activeDetail.GetComponent<MoveDetail>().GetPossitionForTurnLeft();
             TurnDetail(newDetailForm);
         }
 
@@ -316,7 +316,7 @@ namespace Assets.Scripts
         private void ChangeDetailRotation(bool[] newDetailForm)
         {
             lastActiveDetailRotation = newDetailForm;
-            activeDetail.GetComponent<MoveDetail>().turnDetail(newDetailForm);
+            activeDetail.GetComponent<MoveDetail>().TurnDetail(newDetailForm);
         }
         private void ChangeDetailPosition(Vector2 newDetailPosition)
         {

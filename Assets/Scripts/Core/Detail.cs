@@ -9,11 +9,11 @@ public abstract class Detail: MonoBehaviour
 
     public static bool[] firstGameObjectPositions;
 
-    abstract public void initGameObjectPositions();
+    abstract public void InitGameObjectPositions();
 
     public void Initialize()
     {
-        initGameObjectPositions();
+        InitGameObjectPositions();
         ChildCount = transform.childCount;
 
         if (ChildCount != 4)
@@ -28,11 +28,11 @@ public abstract class Detail: MonoBehaviour
                 ChildObjects[i] = this.transform.GetChild(i).gameObject;
             }
         }
-        rebuildingDetail();
+        RebuildingDetail();
     }
 
     // physically rearrange the objects according to the positions in GameObjectPositions
-    public void rebuildingDetail()
+    public void RebuildingDetail()
     {
         var childPositionsInArray = getChildsPossitionsInArray();
         int childPositionsInArrayLength = childPositionsInArray.Length;

@@ -34,7 +34,7 @@ namespace Assets.Scripts
             }
         }
 
-        public void initialization(IMovable movable)
+        public void Initialization(IMovable movable)
         {
             _movable = movable;
         }

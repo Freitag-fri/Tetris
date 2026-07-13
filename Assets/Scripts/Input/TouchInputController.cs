@@ -124,7 +124,7 @@ namespace Assets.Scripts
         }
 
         // "World coordinates" mode - for the board: movement via raycast onto the table plane
-        public void initialization(IMovable movable, Camera _mainCamera, Plane _tablePlane)
+        public void Initialization(IMovable movable, Camera _mainCamera, Plane _tablePlane)
         {
             mainCamera = _mainCamera;
             tablePlane = _tablePlane;
@@ -133,7 +133,7 @@ namespace Assets.Scripts
         }
 
         // "Pixel" mode - for the menu: swipe is measured in screen coordinates
-        public void initialization(IMovable movable)
+        public void Initialization(IMovable movable)
         {
             _movable = movable;
             useWorldCoordinates = false;
