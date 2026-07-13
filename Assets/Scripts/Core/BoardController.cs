@@ -190,7 +190,7 @@ namespace Assets.Scripts
             if (timeUntillNextStep <= 0)
             {
                 Vector2 newDetailPosition = targetPosition + Vector2.down;
-                if (СheckNewDetailPosition(newDetailPosition, lastActiveDetailRotation))
+                if (CheckNewDetailPosition(newDetailPosition, lastActiveDetailRotation))
                 {
                     TargetPosition = newDetailPosition;
                     timeUntillNextStep = stepPeriod;
@@ -207,8 +207,7 @@ namespace Assets.Scripts
                         {
                             FinishMatch();
                             Debug.Log("Game over");
-                            //break;
-                            return; // when drop detail, it dont chow, need to use break;  but dont call СhangeDetailParent for correct cleaning 
+                            return; // when drop detail, it dont chow, need to use break;  but dont call ChangeDetailParent for correct cleaning 
                         }
                     }
                     if(activeDetailMoveCoroutine != null)
@@ -218,8 +217,8 @@ namespace Assets.Scripts
                     }
 
                     UpdateBoardPositionsForNewDetail();
-                    СhangeDetailParent();
-                    СheckLines();
+                    ChangeDetailParent();
+                    CheckLines();
                     isCreateDetail = true;
 
                     return;
@@ -235,7 +234,7 @@ namespace Assets.Scripts
             if (isHardDropping) return;
 
             Vector2 newDetailPosition = targetPosition + Vector2.right;
-            if (СheckNewDetailPosition(newDetailPosition, lastActiveDetailRotation))
+            if (CheckNewDetailPosition(newDetailPosition, lastActiveDetailRotation))
             {
                 TargetPosition = newDetailPosition;
             }
@@ -246,7 +245,7 @@ namespace Assets.Scripts
             if (isHardDropping) return;
 
             Vector2 newDetailPosition = targetPosition + Vector2.left;
-            if (СheckNewDetailPosition(newDetailPosition, lastActiveDetailRotation))
+            if (CheckNewDetailPosition(newDetailPosition, lastActiveDetailRotation))
             {
                 TargetPosition = newDetailPosition;
             }
@@ -277,7 +276,7 @@ namespace Assets.Scripts
             newDetailPosition.y = newDetailPosition.y - countEmptyRows;
             timeUntillNextStep = smoothMoveDuration;
 
-            if (СheckNewDetailPosition(newDetailPosition, lastActiveDetailRotation))
+            if (CheckNewDetailPosition(newDetailPosition, lastActiveDetailRotation))
             {
                 TargetPosition = newDetailPosition;
                 isHardDropping = true;
@@ -297,7 +296,7 @@ namespace Assets.Scripts
             foreach (var offset in offsets)
             {
                 Vector2 potentialPosition = targetPosition + offset;
-                if (СheckNewDetailPosition(potentialPosition, newDetailForm))
+                if (CheckNewDetailPosition(potentialPosition, newDetailForm))
                 {
                     // If we actually shifted, update the position
                     if (offset != Vector2.zero)
@@ -368,7 +367,7 @@ namespace Assets.Scripts
             }
         }
 
-        void СhangeDetailParent()
+        void ChangeDetailParent()
         {
             activeDetail.transform.localPosition = targetPosition;
             var newDetailComponent = activeDetail.GetComponent<Detail>();
@@ -382,7 +381,7 @@ namespace Assets.Scripts
             Destroy(activeDetail);
         }
 
-        void СheckLines()
+        void CheckLines()
         {
             int numberCleanLines = 0;
             int firstFullLine = 0;
@@ -408,7 +407,7 @@ namespace Assets.Scripts
             }
             if (numberCleanLines > 0)
             {
-                StartCoroutine(СleanLine(firstFullLine, numberCleanLines));
+                StartCoroutine(CleanLine(firstFullLine, numberCleanLines));
 
                 var levelSettings = matchProgress.RegisterClearedLines(numberCleanLines);
                 if(levelSettings.stepPeriod != stepPeriod)
@@ -421,7 +420,7 @@ namespace Assets.Scripts
             }
         }
 
-        IEnumerator СleanLine(int firstFullLine, int numberCleanLines)
+        IEnumerator CleanLine(int firstFullLine, int numberCleanLines)
         {
             YieldInstruction[] destroyBlockAnumations = new YieldInstruction[numberCleanLines * boardWidth];
             for (int j = 0; j < boardWidth; j++)
@@ -436,10 +435,10 @@ namespace Assets.Scripts
             foreach(YieldInstruction instruction in destroyBlockAnumations)
                 yield return instruction;
 
-            MoveLinesAfterСlean(firstFullLine, numberCleanLines);
+            MoveLinesAfterClean(firstFullLine, numberCleanLines);
         }
 
-        private void MoveLinesAfterСlean(int firstFullLine, int numberCleanLines)
+        private void MoveLinesAfterClean(int firstFullLine, int numberCleanLines)
         {
             for (int k = firstFullLine - numberCleanLines; k >= 0; k--)
             {
@@ -501,7 +500,7 @@ namespace Assets.Scripts
             CreateDetailEvent?.Invoke();
         }
 
-        bool СheckNewDetailPosition(Vector2 detailPossition, bool[] detail)
+        bool CheckNewDetailPosition(Vector2 detailPossition, bool[] detail)
         {
             var localBoardPositions = boardPositions;
 
