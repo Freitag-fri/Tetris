@@ -17,7 +17,9 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private GameObject skinsMenu;
 
-    [SerializeField] private GameObject skinTextObj;
+    [SerializeField] private GameObject skinLabel;
+    [SerializeField] private TMP_Text skinNameText;
+    [SerializeField] private TMP_Text skinCounterText;
 
     [SerializeField] private Button skinBoardButton;
     [SerializeField] private Button skinBlockButton;
@@ -57,8 +59,8 @@ public class MenuManager : MonoBehaviour
 
     public void Play()
     {
-        GameManager.Instance.BoardMaterial = materialManager.GetCurrentBoardSkin().Material;
-        GameManager.Instance.BlockMaterial = materialManager.GetCurrentBlockSkin().Material;
+        GameManager.Instance.BoardMaterial = materialManager.GetCurrentBoardSkinInfo().Skin.Material;
+        GameManager.Instance.BlockMaterial = materialManager.GetCurrentBlockSkinInfo().Skin.Material;
         SceneManager.LoadScene("GameScene");
     }
 
@@ -83,7 +85,7 @@ public class MenuManager : MonoBehaviour
         settingsPanel.SetActive(false);
         menuPanel.SetActive(true);
         skinsMenu.SetActive(false);
-        skinTextObj.SetActive(false);
+        skinLabel.SetActive(false);
         currentMenuStatus = MenuStatus.MainMenu;
 
         //StartCoroutine(CloseSettingAfterTime());
@@ -115,8 +117,8 @@ public class MenuManager : MonoBehaviour
         blockCamera.Priority = 0;
         currentMenuStatus = MenuStatus.BoardSkins;
 
-        skinTextObj.SetActive(true);
-        skinTextObj.GetComponent<TMP_Text>().SetText(GetCurrentSkinName());
+        skinLabel.SetActive(true);
+        UpdateSkinInfo();
     }
 
     public void EnterToBlockSkins()
@@ -132,22 +134,9 @@ public class MenuManager : MonoBehaviour
         boardCamera.Priority = 0;
         currentMenuStatus = MenuStatus.BlockSkins;
 
-        skinTextObj.SetActive(true);
-        skinTextObj.GetComponent<TMP_Text>().SetText(GetCurrentSkinName());
+        skinLabel.SetActive(true);
+        UpdateSkinInfo();
     }
-
-    //IEnumerable
-    //IEnumerator OpenSettingsAfterTime()
-    //{
-    //    yield return new WaitForSeconds(2.0f);
-    //    settingsPanel.SetActive(true);
-    //}
-
-    //IEnumerator CloseSettingAfterTime()
-    //{
-    //    yield return new WaitForSeconds(2.0f);
-    //    menuPanel.SetActive(true);
-    //}
 
     private Vector2 touchPossition;
 
@@ -174,21 +163,19 @@ public class MenuManager : MonoBehaviour
 
                 if (releasePosition.x > touchPossition.x + 80)
                 {
-                    Debug.Log($"Проведите пальцем влево");
                     SensorMoveRight();
                 }
                 else if (releasePosition.x < touchPossition.x - 80)
                 {
-                    Debug.Log($"Проведите пальцем вправо");
                     SensorMoveLeft();
-                    touchPossition = Vector2.zero;
                 }
+                touchPossition = Vector2.zero;
             }
         }
-        else
+        /*else
         {
-            //Debug.Log($"тачпад не активен");
-        }
+            Debug.Log($"touchpad is not active");
+        }*/
     }
 
     private void SensorMoveLeft()
@@ -201,7 +188,7 @@ public class MenuManager : MonoBehaviour
         {
             materialManager.NextBlockSkin();
         }
-        skinTextObj.GetComponent<TMP_Text>().SetText(GetCurrentSkinName());
+        UpdateSkinInfo();
     }
 
     private void SensorMoveRight()
@@ -215,19 +202,18 @@ public class MenuManager : MonoBehaviour
         {
             materialManager.PreviousBlockSkin();
         }
-        skinTextObj.GetComponent<TMP_Text>().SetText(GetCurrentSkinName());
+        UpdateSkinInfo();
     }
 
-    private string GetCurrentSkinName()
+    private void UpdateSkinInfo()
     {
-        if(currentMenuStatus == MenuStatus.BoardSkins)
-        {
-            return materialManager.GetCurrentBoardSkin().Id;
-        }
-        else if (currentMenuStatus == MenuStatus.BlockSkins)
-        {
-            return materialManager.GetCurrentBlockSkin().Id;
-        }
-        return "no name";
+        SkinInfo skinInfo;
+        if (currentMenuStatus == MenuStatus.BoardSkins)
+            skinInfo = materialManager.GetCurrentBoardSkinInfo();
+        else
+            skinInfo = materialManager.GetCurrentBlockSkinInfo();
+
+        skinNameText.SetText(skinInfo.Skin.Id);
+        skinCounterText.SetText("{0}/{1}", skinInfo.CurrentSkinIndex + 1, skinInfo.TotalSkinsCount);
     }
 }
