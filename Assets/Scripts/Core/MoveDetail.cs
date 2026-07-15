@@ -1,39 +1,18 @@
-using System.Collections;
 using UnityEngine;
 
-public class moveDetail : MonoBehaviour
+public class MoveDetail : MonoBehaviour
 {
     [SerializeField] public Detail detailScript;
 
     [SerializeField] private GameObject detCenter;
 
-    //private Vector3 offset = new Vector3(-1f, 1f, 0f);
-
-
-
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        //Vector3 pivotPoint = transform.TransformPoint(offset);
-
-        //transform.RotateAround(detCenter.transform.position, Vector3.forward, 50 * Time.deltaTime);
-            //var newCenter = activeDetail.transform.localPosition + new Vector3(2, -2, 0);
-            //activeDetail.transform.RotateAround(newCenter, Vector3.forward, 50 * Time.deltaTime);
-    }
-
-    public void turnDetail(bool[] newGameObjectPositions)
+    public void TurnDetail(bool[] newGameObjectPositions)
     {
         detailScript.GameObjectPositions = newGameObjectPositions;
-        detailScript.rebuildingDetail();
+        detailScript.RebuildingDetail();
     }
 
-    public bool[] getPossitionForTurnRight()
+    public bool[] GetPositionForTurnRight()
     {
         bool[] newGameObjectPositions = new bool[16]; // change 16 to gameObjectPositions.Length
         for (int i = 0; i < 16; i++)
@@ -48,7 +27,7 @@ public class moveDetail : MonoBehaviour
         return newGameObjectPositions;
     }
 
-    public bool[] getPossitionForTurnLeft()
+    public bool[] GetPositionForTurnLeft()
     {
         bool[] newGameObjectPositions = new bool[16]; // change 16 to gameObjectPositions.Length
         for (int i = 0; i < 16; i++)

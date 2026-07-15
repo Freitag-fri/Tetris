@@ -3,11 +3,10 @@ using Cinemachine;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class MenuManager : MonoBehaviour
+public class MenuManager : MonoBehaviour, IMovable
 {
     [SerializeField] private CinemachineVirtualCamera mainCamera;
     [SerializeField] private CinemachineVirtualCamera boardCamera;
@@ -16,15 +15,10 @@ public class MenuManager : MonoBehaviour
     [SerializeField] private GameObject menuPanel;
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private GameObject skinsMenu;
-
     [SerializeField] private GameObject skinTextObj;
 
     [SerializeField] private Button skinBoardButton;
     [SerializeField] private Button skinBlockButton;
-
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-
     [SerializeField] private MaterialManager materialManager;
 
     enum MenuStatus
@@ -37,6 +31,7 @@ public class MenuManager : MonoBehaviour
     }
 
     private MenuStatus currentMenuStatus;
+    private TouchInputController touchInputController;
 
     void Start()
     {
@@ -47,13 +42,14 @@ public class MenuManager : MonoBehaviour
         menuPanel.SetActive(true);
         settingsPanel.SetActive(false);
         skinsMenu.SetActive(false);
-    }
 
-    void Update()
-    {
-        SensorNavigationSkinsMenu();
-    }
+        touchInputController = GetComponent<TouchInputController>();
+        if (touchInputController == null)
+            touchInputController = gameObject.AddComponent<TouchInputController>();
 
+        touchInputController.Initialization(this);
+        touchInputController.enabled = false;
+    }
 
     public void Play()
     {
@@ -85,6 +81,7 @@ public class MenuManager : MonoBehaviour
         skinsMenu.SetActive(false);
         skinTextObj.SetActive(false);
         currentMenuStatus = MenuStatus.MainMenu;
+        touchInputController.enabled = false;
 
         //StartCoroutine(CloseSettingAfterTime());
     }
@@ -95,6 +92,7 @@ public class MenuManager : MonoBehaviour
         menuPanel.SetActive(false);
         settingsPanel.SetActive(false);
         currentMenuStatus = MenuStatus.SkinsMenu;
+        touchInputController.enabled = false;
     }
 
     //public void ExitFromSkinsMenu()
@@ -114,6 +112,7 @@ public class MenuManager : MonoBehaviour
         boardCamera.Priority = 3;
         blockCamera.Priority = 0;
         currentMenuStatus = MenuStatus.BoardSkins;
+        touchInputController.enabled = true;
 
         skinTextObj.SetActive(true);
         skinTextObj.GetComponent<TMP_Text>().SetText(GetCurrentSkinName());
@@ -131,64 +130,10 @@ public class MenuManager : MonoBehaviour
         blockCamera.Priority = 3;
         boardCamera.Priority = 0;
         currentMenuStatus = MenuStatus.BlockSkins;
+        touchInputController.enabled = true;
 
         skinTextObj.SetActive(true);
         skinTextObj.GetComponent<TMP_Text>().SetText(GetCurrentSkinName());
-    }
-
-    //IEnumerable
-    //IEnumerator OpenSettingsAfterTime()
-    //{
-    //    yield return new WaitForSeconds(2.0f);
-    //    settingsPanel.SetActive(true);
-    //}
-
-    //IEnumerator CloseSettingAfterTime()
-    //{
-    //    yield return new WaitForSeconds(2.0f);
-    //    menuPanel.SetActive(true);
-    //}
-
-    private Vector2 touchPossition;
-
-    private void SensorNavigationSkinsMenu()
-    {
-        if(currentMenuStatus != MenuStatus.BoardSkins && currentMenuStatus != MenuStatus.BlockSkins)
-        {
-            if (touchPossition != Vector2.zero) //rewrite
-                touchPossition = Vector2.zero;
-            return;
-        }
-
-        if (Touchscreen.current != null)
-        {
-            var touch = Touchscreen.current.primaryTouch;
-
-            if (touch.press.wasPressedThisFrame)
-            {
-                touchPossition = touch.position.ReadValue();
-            }
-            else if (touch.press.wasReleasedThisFrame && touchPossition != Vector2.zero)
-            {
-                Vector2 releasePosition = touch.position.ReadValue();
-
-                if (releasePosition.x > touchPossition.x + 80)
-                {
-                    Debug.Log($"Проведите пальцем влево");
-                    SensorMoveRight();
-                }
-                else if (releasePosition.x < touchPossition.x - 80)
-                {
-                    Debug.Log($"Проведите пальцем вправо");
-                    SensorMoveLeft();
-                    touchPossition = Vector2.zero;
-                }
-            }
-        }
-        else
-        {
-            //Debug.Log($"тачпад не активен");
-        }
     }
 
     private void SensorMoveLeft()
@@ -209,7 +154,6 @@ public class MenuManager : MonoBehaviour
         if (currentMenuStatus == MenuStatus.BoardSkins)
         {
             materialManager.PreviousBoardSkin();
-
         }
         else if (currentMenuStatus == MenuStatus.BlockSkins)
         {
@@ -229,5 +173,21 @@ public class MenuManager : MonoBehaviour
             return materialManager.GetCurrentBlockSkin().Id;
         }
         return "no name";
+    }
+
+    public void Move(MoveDirection direction)
+    {
+        switch (direction)
+        {
+            case MoveDirection.TurnLeft:
+                SensorMoveLeft();
+                break;
+            case MoveDirection.TurnRight:
+                SensorMoveRight();
+                break;
+            default:
+                Debug.Log($"Move direction {direction} is not supported in MenuManager");
+                break;
+        }
     }
 }

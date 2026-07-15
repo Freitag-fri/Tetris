@@ -1,6 +1,8 @@
 using UnityEngine;
+using UnityEngine.Rendering;
 
-public class I_object : Detail
+
+public class L_object : Detail
 {
     public override bool[] GameObjectPositions
     {
@@ -17,21 +19,13 @@ public class I_object : Detail
         get; protected set;
     }
 
-    void Start()
-    {
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-    }
-
-    public override void initGameObjectPositions()
+    public override void InitGameObjectPositions()
     {
         GameObjectPositions = new bool[16] {
+                                false, false, false, false,
                                 false, true, false, false,
                                 false, true, false, false,
-                                false, true, false, false,
-                                false, true, false, false };
+                                false, true, true, false
+        };
     }
 }
