@@ -1,25 +1,22 @@
-﻿using System.Collections;
-using UnityEngine;
-using UnityEngine.UIElements;
+﻿using UnityEngine;
 
 namespace Assets.Scripts
 {
 	public class CreateDetailManager : MonoBehaviour
 	{
-
         [SerializeField] private GameObject[] prefabDetails; // todo check is empty in start()
         [SerializeField] private GameObject nextDetailPosition;
         
 		private GameObject nextDetail;
         private int prefabDetailsCount;
 
-        [SerializeField] private Material blockMaterioal;
-        [SerializeField] private Material boardMaterioal;
+        [SerializeField] private Material blockMaterial;
+        [SerializeField] private Material boardMaterial;
 
         private void Awake()
         {
-            blockMaterioal.mainTexture = GameManager.Instance.BlockMaterial.mainTexture;
-            boardMaterioal.mainTexture = GameManager.Instance.BoardMaterial.mainTexture;
+            blockMaterial.mainTexture = GameManager.Instance.BlockMaterial.mainTexture;
+            boardMaterial.mainTexture = GameManager.Instance.BoardMaterial.mainTexture;
         }
 
         // Use this for initialization
@@ -28,7 +25,7 @@ namespace Assets.Scripts
             prefabDetailsCount = prefabDetails.Length;
         }
 
-        private void createNextDetail() 
+        private void CreateNextDetail() 
         {
             int numberRandomDetail = UnityEngine.Random.Range(0, prefabDetailsCount);
             nextDetail = Instantiate(prefabDetails[numberRandomDetail], nextDetailPosition.transform);
@@ -37,15 +34,15 @@ namespace Assets.Scripts
             l_object.Initialize();
         }
 
-        public GameObject returnNextDetailAndCreateNew()
+        public GameObject ReturnNextDetailAndCreateNew()
         {
             if(nextDetail == null)
             {
-                createNextDetail();
+                CreateNextDetail();
             }
-            var newActualDdetail = nextDetail;
-            createNextDetail();
-            return newActualDdetail;
+            var newActualDetail = nextDetail;
+            CreateNextDetail();
+            return newActualDetail;
         }
 	}
 }

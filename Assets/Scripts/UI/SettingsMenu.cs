@@ -2,7 +2,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-
 public class SettingsMenu : MonoBehaviour
 {
     [SerializeField] private Slider slider;
@@ -24,7 +23,6 @@ public class SettingsMenu : MonoBehaviour
 
         float value = slider.value;
         textField.SetText(value.ToString("F2"));
-
     }
 
     // Update is called once per frame

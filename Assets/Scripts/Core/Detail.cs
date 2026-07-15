@@ -1,9 +1,5 @@
 using System.Linq;
 using UnityEngine;
-//using System.Collections;
-
-
-[System.Serializable]
 
 public abstract class Detail: MonoBehaviour
 {
@@ -13,11 +9,11 @@ public abstract class Detail: MonoBehaviour
 
     public static bool[] firstGameObjectPositions;
 
-    abstract public void initGameObjectPositions();
+    abstract public void InitGameObjectPositions();
 
     public void Initialize()
     {
-        initGameObjectPositions();
+        InitGameObjectPositions();
         ChildCount = transform.childCount;
 
         if (ChildCount != 4)
@@ -32,14 +28,13 @@ public abstract class Detail: MonoBehaviour
                 ChildObjects[i] = this.transform.GetChild(i).gameObject;
             }
         }
-        rebuildingDetail();
+        RebuildingDetail();
     }
 
     // physically rearrange the objects according to the positions in GameObjectPositions
-    public void rebuildingDetail()
+    public void RebuildingDetail()
     {
-        var childPositionsInArray = getChildsPossitionsInArray();
-        //StartCoroutine(SmoothRotation(childPositionsInArray, 0.05f));
+        var childPositionsInArray = GetChildsPositionsInArray();
         int childPositionsInArrayLength = childPositionsInArray.Length;
         for (int i = 0; i < childPositionsInArrayLength; i++)
         {
@@ -50,7 +45,7 @@ public abstract class Detail: MonoBehaviour
         }
     }
 
-    public int[] getChildsPossitionsInArray()
+    public int[] GetChildsPositionsInArray()
     {
         if (GameObjectPositions == null)
         {
@@ -58,30 +53,30 @@ public abstract class Detail: MonoBehaviour
             return new int[0];
         }
 
-        var childPossitions = Enumerable.Range(0, GameObjectPositions.Length).Where(i => GameObjectPositions[i] == true).ToList();
-        //var childPossitions = from i in Enumerable.Range(0, GameObjectPositions.Length)
+        var childPositions = Enumerable.Range(0, GameObjectPositions.Length).Where(i => GameObjectPositions[i] == true).ToList();
+        //var childPositions = from i in Enumerable.Range(0, GameObjectPositions.Length)
         //                      where GameObjectPositions[i]
         //                      select i;
-        return childPossitions.ToArray()    ;
+        return childPositions.ToArray();
     }
 
-    //IEnumerator SmoothRotation(int[] newChildPossitionsInArray, float duration)
+    //IEnumerator SmoothRotation(int[] newChildPositionsInArray, float duration)
     //{
-    //    var carrentChildPossitions = new Vector2[ChildCount];
+    //    var carrentChildPositions = new Vector2[ChildCount];
     //    //var carrentChildRotations = new Vector2[ChildCount];
     //    var carrentChildRotations = new Quaternion[ChildCount];
-    //    var newChildPossitions = new Vector2[ChildCount];
+    //    var newChildPositions = new Vector2[ChildCount];
     //    var newChildRotations = new Quaternion[ChildCount];
     //    for (int i = 0; i < ChildCount; i++)
     //    {
-    //        carrentChildPossitions[i] = ChildObjects[i].transform.localPosition;
+    //        carrentChildPositions[i] = ChildObjects[i].transform.localPosition;
     //        carrentChildRotations[i] = ChildObjects[i].transform.localRotation;
     //        //carrentChildRotations[i] = ChildObjects[i].transform.localEulerAngles;
 
-    //        int positionInArray = newChildPossitionsInArray[i];
+    //        int positionInArray = newChildPositionsInArray[i];
     //        int row = positionInArray / 4;
     //        int col = positionInArray % 4;
-    //        newChildPossitions[i] = new Vector2(col, -row);
+    //        newChildPositions[i] = new Vector2(col, -row);
     //        newChildRotations[i] = carrentChildRotations[i] * Quaternion.Euler(0, 0, 90); // rotate 90 degrees around Z axis
     //    }
 
@@ -90,7 +85,7 @@ public abstract class Detail: MonoBehaviour
     //    {
     //        for (int i = 0; i < ChildCount; i++)
     //        {
-    //            ChildObjects[i].transform.localPosition = Vector2.Lerp(carrentChildPossitions[i], newChildPossitions[i], elapsedTime / duration);
+    //            ChildObjects[i].transform.localPosition = Vector2.Lerp(carrentChildPositions[i], newChildPositions[i], elapsedTime / duration);
     //            ChildObjects[i].transform.localRotation = Quaternion.Lerp(carrentChildRotations[i], newChildRotations[i], elapsedTime / duration);
     //        }
 
@@ -99,7 +94,7 @@ public abstract class Detail: MonoBehaviour
     //    }
     //    for (int i = 0; i < ChildCount; i++)
     //    {
-    //        ChildObjects[i].transform.localPosition = newChildPossitions[i];
+    //        ChildObjects[i].transform.localPosition = newChildPositions[i];
     //        ChildObjects[i].transform.localRotation = newChildRotations[i];
     //    }
     //}
