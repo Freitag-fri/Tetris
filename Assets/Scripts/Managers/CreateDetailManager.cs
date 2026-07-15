@@ -25,7 +25,7 @@ namespace Assets.Scripts
             prefabDetailsCount = prefabDetails.Length;
         }
 
-        private void createNextDetail() 
+        private void CreateNextDetail() 
         {
             int numberRandomDetail = UnityEngine.Random.Range(0, prefabDetailsCount);
             nextDetail = Instantiate(prefabDetails[numberRandomDetail], nextDetailPosition.transform);
@@ -34,15 +34,15 @@ namespace Assets.Scripts
             l_object.Initialize();
         }
 
-        public GameObject returnNextDetailAndCreateNew()
+        public GameObject ReturnNextDetailAndCreateNew()
         {
             if(nextDetail == null)
             {
-                createNextDetail();
+                CreateNextDetail();
             }
-            var newActualDdetail = nextDetail;
-            createNextDetail();
-            return newActualDdetail;
+            var newActualDetail = nextDetail;
+            CreateNextDetail();
+            return newActualDetail;
         }
 	}
 }

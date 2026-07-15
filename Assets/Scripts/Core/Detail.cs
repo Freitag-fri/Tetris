@@ -34,7 +34,7 @@ public abstract class Detail: MonoBehaviour
     // physically rearrange the objects according to the positions in GameObjectPositions
     public void RebuildingDetail()
     {
-        var childPositionsInArray = getChildsPositionsInArray();
+        var childPositionsInArray = GetChildsPositionsInArray();
         int childPositionsInArrayLength = childPositionsInArray.Length;
         for (int i = 0; i < childPositionsInArrayLength; i++)
         {
@@ -45,7 +45,7 @@ public abstract class Detail: MonoBehaviour
         }
     }
 
-    public int[] getChildsPositionsInArray()
+    public int[] GetChildsPositionsInArray()
     {
         if (GameObjectPositions == null)
         {

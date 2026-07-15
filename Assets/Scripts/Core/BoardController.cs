@@ -470,7 +470,7 @@ namespace Assets.Scripts
         void CreateNewDetail()
         {
             var createDetailManager = GetComponent<CreateDetailManager>();
-            activeDetail = createDetailManager.returnNextDetailAndCreateNew();
+            activeDetail = createDetailManager.ReturnNextDetailAndCreateNew();
             activeDetail.transform.SetParent(transform);
 
             int lowestDetailPoint = 0;

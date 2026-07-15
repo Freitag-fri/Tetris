@@ -9,27 +9,27 @@ namespace Assets.Scripts
         public Material materialEmptyPosition;
         public Material materialFullPosition;
         public GameObject prefabForDebug;
-        public GameObject[] boardDebugingDetails = new GameObject[200]; // get
+        public GameObject[] boardDebuggingDetails = new GameObject[200]; // get
 
         // Use this for initialization
         void Start()
 		{
             GameObject pointPosition = new GameObject("pointPosition"); /*Instantiate(prefabDetails[2], new Vector2(15, 0));*/
             pointPosition.transform.position = new Vector2(15, 0);
-            int boardPositionsLength = boardDebugingDetails.Length;
+            int boardPositionsLength = boardDebuggingDetails.Length;
             for (int i = 0; i < boardPositionsLength; i++)
             {
                 int row = i / 10;
                 int col = i % 10;
                 GameObject newObject = Instantiate(prefabForDebug, pointPosition.transform/*, new Vector2(row, col)*/);
                 newObject.transform.localPosition = new Vector2(col, -row);
-                boardDebugingDetails[i] = newObject;
+                boardDebuggingDetails[i] = newObject;
             }
 
-            boardController.CreateDetailEvent += ReDrawDebugingObjects;
+            boardController.CreateDetailEvent += RedrawDebuggingObjects;
         }
 
-        void ReDrawDebugingObjects()
+        void RedrawDebuggingObjects()
         {
             var boardPositions = boardController.boardPositions;
             var boardPositionsLength = boardPositions.Length;
@@ -37,11 +37,11 @@ namespace Assets.Scripts
             {
                 if (boardPositions[i] != null)
                 {
-                    boardDebugingDetails[i].GetComponent<Renderer>().material = materialFullPosition;
+                    boardDebuggingDetails[i].GetComponent<Renderer>().material = materialFullPosition;
                 }
                 else
                 {
-                    boardDebugingDetails[i].GetComponent<Renderer>().material = materialEmptyPosition;
+                    boardDebuggingDetails[i].GetComponent<Renderer>().material = materialEmptyPosition;
                 }
             }
         }

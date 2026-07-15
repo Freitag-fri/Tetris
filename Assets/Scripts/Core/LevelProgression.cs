@@ -13,7 +13,7 @@ namespace Assets.Scripts
     {
         // clearLines is the inclusive lower bound of a level.
         // Entries must stay ascending and the first one must stay at 0, so the lookup never falls through to default.
-        static LevelsSettings[] pointsForLinesConfigurationn  = new LevelsSettings[18] {
+        static LevelsSettings[] pointsForLinesConfiguration  = new LevelsSettings[18] {
             new LevelsSettings { clearLines = 0, stepPeriod = 1.2f, level = 1 },
             new LevelsSettings { clearLines = 5, stepPeriod = 0.528f, level = 2 },
             new LevelsSettings { clearLines = 10, stepPeriod = 0.528f, level = 3 },
@@ -36,7 +36,7 @@ namespace Assets.Scripts
 
         public static LevelsSettings GetLevelSettingsByClearLines(int totalNumberClearLines)
         {
-            return pointsForLinesConfigurationn.LastOrDefault(v => v.clearLines <= totalNumberClearLines);
+            return pointsForLinesConfiguration.LastOrDefault(v => v.clearLines <= totalNumberClearLines);
         }
     }
 }
