@@ -3,6 +3,20 @@ using DG.Tweening;
 
 namespace Assets.Scripts
 {
+    public struct SkinInfo
+    {
+        public SkinInfo(Skins skin, int currentSkinIndex, int totalSkinsCount)
+        {
+            this.Skin = skin;
+            this.CurrentSkinIndex = currentSkinIndex;
+            this.TotalSkinsCount = totalSkinsCount;
+        }
+        public Skins Skin { get; }
+        public int CurrentSkinIndex { get; }
+        public int TotalSkinsCount { get; }
+
+
+    }
 	public class MaterialManager: MonoBehaviour
 	{
         [SerializeField] private GameObject[] _boardPrefab;
@@ -79,14 +93,24 @@ namespace Assets.Scripts
                 .OnStart(() => newActivePrefab.SetActive(true));
         }
 
-        public Skins GetCurrentBoardSkin()
+        public SkinInfo GetCurrentBoardSkinInfo()
         {
-            return _boardSkinsPrefabs[_currentBoardSkinIndex];
+            return new SkinInfo
+            (
+                _boardSkinsPrefabs[_currentBoardSkinIndex],
+                _currentBoardSkinIndex,
+                _boardSkinsPrefabs.Length
+            );
         }
 
-        public Skins GetCurrentBlockSkin()
+        public SkinInfo GetCurrentBlockSkinInfo()
         {
-            return _detailSkinsPrefabs[_currentDetailSkinIndex];
+            return new SkinInfo
+            (
+                _detailSkinsPrefabs[_currentDetailSkinIndex],
+                _currentDetailSkinIndex,
+                _detailSkinsPrefabs.Length
+            );
         }
     }
 }  

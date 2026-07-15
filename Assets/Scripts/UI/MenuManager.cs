@@ -15,7 +15,10 @@ public class MenuManager : MonoBehaviour, IMovable
     [SerializeField] private GameObject menuPanel;
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private GameObject skinsMenu;
-    [SerializeField] private GameObject skinTextObj;
+
+    [SerializeField] private GameObject skinLabel;
+    [SerializeField] private TMP_Text skinNameText;
+    [SerializeField] private TMP_Text skinCounterText;
 
     [SerializeField] private Button skinBoardButton;
     [SerializeField] private Button skinBlockButton;
@@ -53,8 +56,8 @@ public class MenuManager : MonoBehaviour, IMovable
 
     public void Play()
     {
-        GameManager.Instance.BoardMaterial = materialManager.GetCurrentBoardSkin().Material;
-        GameManager.Instance.BlockMaterial = materialManager.GetCurrentBlockSkin().Material;
+        GameManager.Instance.BoardMaterial = materialManager.GetCurrentBoardSkinInfo().Skin.Material;
+        GameManager.Instance.BlockMaterial = materialManager.GetCurrentBlockSkinInfo().Skin.Material;
         SceneManager.LoadScene("GameScene");
     }
 
@@ -79,7 +82,7 @@ public class MenuManager : MonoBehaviour, IMovable
         settingsPanel.SetActive(false);
         menuPanel.SetActive(true);
         skinsMenu.SetActive(false);
-        skinTextObj.SetActive(false);
+        skinLabel.SetActive(false);
         currentMenuStatus = MenuStatus.MainMenu;
         touchInputController.enabled = false;
 
@@ -114,8 +117,8 @@ public class MenuManager : MonoBehaviour, IMovable
         currentMenuStatus = MenuStatus.BoardSkins;
         touchInputController.enabled = true;
 
-        skinTextObj.SetActive(true);
-        skinTextObj.GetComponent<TMP_Text>().SetText(GetCurrentSkinName());
+        skinLabel.SetActive(true);
+        UpdateSkinInfo();
     }
 
     public void EnterToBlockSkins()
@@ -132,8 +135,8 @@ public class MenuManager : MonoBehaviour, IMovable
         currentMenuStatus = MenuStatus.BlockSkins;
         touchInputController.enabled = true;
 
-        skinTextObj.SetActive(true);
-        skinTextObj.GetComponent<TMP_Text>().SetText(GetCurrentSkinName());
+        skinLabel.SetActive(true);
+        UpdateSkinInfo();
     }
 
     private void SensorMoveLeft()
@@ -146,7 +149,7 @@ public class MenuManager : MonoBehaviour, IMovable
         {
             materialManager.NextBlockSkin();
         }
-        skinTextObj.GetComponent<TMP_Text>().SetText(GetCurrentSkinName());
+        UpdateSkinInfo();
     }
 
     private void SensorMoveRight()
@@ -159,20 +162,19 @@ public class MenuManager : MonoBehaviour, IMovable
         {
             materialManager.PreviousBlockSkin();
         }
-        skinTextObj.GetComponent<TMP_Text>().SetText(GetCurrentSkinName());
+        UpdateSkinInfo();
     }
 
-    private string GetCurrentSkinName()
+    private void UpdateSkinInfo()
     {
-        if(currentMenuStatus == MenuStatus.BoardSkins)
-        {
-            return materialManager.GetCurrentBoardSkin().Id;
-        }
-        else if (currentMenuStatus == MenuStatus.BlockSkins)
-        {
-            return materialManager.GetCurrentBlockSkin().Id;
-        }
-        return "no name";
+        SkinInfo skinInfo;
+        if (currentMenuStatus == MenuStatus.BoardSkins)
+            skinInfo = materialManager.GetCurrentBoardSkinInfo();
+        else
+            skinInfo = materialManager.GetCurrentBlockSkinInfo();
+
+        skinNameText.SetText(skinInfo.Skin.Id);
+        skinCounterText.SetText("{0}/{1}", skinInfo.CurrentSkinIndex + 1, skinInfo.TotalSkinsCount);
     }
 
     public void Move(MoveDirection direction)
