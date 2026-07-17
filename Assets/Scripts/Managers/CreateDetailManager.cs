@@ -12,11 +12,14 @@ namespace Assets.Scripts
 
         [SerializeField] private Material blockMaterial;
         [SerializeField] private Material boardMaterial;
+        [SerializeField] private Material ghostMaterial;
 
         private void Awake()
         {
+
             blockMaterial.mainTexture = GameManager.Instance.BlockMaterial.mainTexture;
             boardMaterial.mainTexture = GameManager.Instance.BoardMaterial.mainTexture;
+            ghostMaterial.mainTexture = GameManager.Instance.BlockMaterial.mainTexture;
         }
 
         // Use this for initialization
