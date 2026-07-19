@@ -126,6 +126,9 @@ namespace Assets.Scripts
             StopAllCoroutines();
             IsPause = true;
 
+            if (matchProgress.Score > SaveData.HighScore)
+                SaveData.HighScore = matchProgress.Score;
+
             canvasController.SetResultGameCanvas(matchProgress.ToStatisticParams());
         }
 
