@@ -19,6 +19,7 @@ public class MenuManager : MonoBehaviour, IMovable
     [SerializeField] private GameObject skinLabel;
     [SerializeField] private TMP_Text skinNameText;
     [SerializeField] private TMP_Text skinCounterText;
+    [SerializeField] private Button selectSkinButton;
 
     [SerializeField] private Button skinBoardButton;
     [SerializeField] private Button skinBlockButton;
@@ -56,25 +57,33 @@ public class MenuManager : MonoBehaviour, IMovable
 
     public void Play()
     {
-        GameManager.Instance.BoardMaterial = materialManager.GetCurrentBoardSkinInfo().Skin.Material;
-        GameManager.Instance.BlockMaterial = materialManager.GetCurrentBlockSkinInfo().Skin.Material;
+        GameManager.Instance.BoardMaterial = materialManager.GetSelectedBoardMaterial();
+        GameManager.Instance.BlockMaterial = materialManager.GetSelectedBlockMaterial();
         SceneManager.LoadScene("GameScene");
     }
 
-    // rename to OpenSettings
-    public void Settings()  // need rewrite
+    public void OpenSettings()
     {
-        mainCamera.Priority = 0;
-        //settingsCamera.Priority = 1;
-
         menuPanel.SetActive(false);
         settingsPanel.SetActive(true);
+    }
 
-        //StartCoroutine(OpenSettingsAfterTime());
+    // Roll the current skin preview back to its saved skin if the player left without pressing Select.
+    private void RollbackPreviewIfNeeded()
+    {
+        if(currentMenuStatus != MenuStatus.BoardSkins && currentMenuStatus != MenuStatus.BlockSkins)
+            return;
+
+        if ( !materialManager.IsCurrentBoardSkinSelected())
+            materialManager.RollbackBoardSkin();
+        if (!materialManager.IsCurrentBlockSkinSelected())
+            materialManager.RollbackBlockSkin();
     }
 
     public void EnterToMainMenu()
     {
+        RollbackPreviewIfNeeded();
+
         mainCamera.Priority = 1;
         boardCamera.Priority = 0;
         blockCamera.Priority = 0;
@@ -85,8 +94,6 @@ public class MenuManager : MonoBehaviour, IMovable
         skinLabel.SetActive(false);
         currentMenuStatus = MenuStatus.MainMenu;
         touchInputController.enabled = false;
-
-        //StartCoroutine(CloseSettingAfterTime());
     }
 
     public void EnterToSkinsMenu()
@@ -168,13 +175,35 @@ public class MenuManager : MonoBehaviour, IMovable
     private void UpdateSkinInfo()
     {
         SkinInfo skinInfo;
+        bool isCurrentSkinSelected;
         if (currentMenuStatus == MenuStatus.BoardSkins)
+        {
             skinInfo = materialManager.GetCurrentBoardSkinInfo();
+            isCurrentSkinSelected = materialManager.IsCurrentBoardSkinSelected();
+        }
         else
+        {
             skinInfo = materialManager.GetCurrentBlockSkinInfo();
+            isCurrentSkinSelected = materialManager.IsCurrentBlockSkinSelected();
+        }
 
         skinNameText.SetText(skinInfo.Skin.Id);
         skinCounterText.SetText("{0}/{1}", skinInfo.CurrentSkinIndex + 1, skinInfo.TotalSkinsCount);
+        selectSkinButton.interactable = !isCurrentSkinSelected;
+    }
+
+    public void SelectSkin()
+    {
+        if (currentMenuStatus == MenuStatus.BoardSkins)
+        {
+            materialManager.SelectCurrentBoardSkin();
+        }
+        else if (currentMenuStatus == MenuStatus.BlockSkins)
+        {
+            materialManager.SelectCurrentBlockSkin();
+        }
+
+        selectSkinButton.interactable = false;
     }
 
     public void Move(MoveDirection direction)

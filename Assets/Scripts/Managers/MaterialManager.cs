@@ -51,26 +51,35 @@ namespace Assets.Scripts
         private readonly AnimationConfig _boardConfig = new AnimationConfig(40f, 1f);
         private readonly AnimationConfig _blockConfig = new AnimationConfig(8f, 0.9f);
 
-
-        // Use this for initialization
         void Start()
 		{
-            if(_boardSkinsPrefabs != null && _boardSkinsPrefabs.Length > 0)
-            {
-                _boardPrefab[_currentBoardIndex].GetComponent<Renderer>().material = _boardSkinsPrefabs[0].Material;
-                _currentBoardSkinIndex = 0;
-            }
-            if (_detailSkinsPrefabs != null && _detailSkinsPrefabs.Length > 0)
-            {
-                _detailPrefab[_currentDetailIndex].GetComponent<Renderer>().material = _detailSkinsPrefabs[0].Material;
-                _currentDetailSkinIndex = 0;
-            }
+            _currentBoardSkinIndex = SaveData.BoardSkinIndex;
+            if (_currentBoardSkinIndex > _boardSkinsPrefabs.Length - 1)
+                _currentBoardSkinIndex = _boardSkinsPrefabs.Length - 1;
+            _boardPrefab[_currentBoardIndex].GetComponent<Renderer>().material = _boardSkinsPrefabs[_currentBoardSkinIndex].Material;
+            
+            _currentDetailSkinIndex = SaveData.BlockSkinIndex;
+            if (_currentDetailSkinIndex > _detailSkinsPrefabs.Length - 1)
+                _currentDetailSkinIndex = _detailSkinsPrefabs.Length - 1;
+            _detailPrefab[_currentDetailIndex].GetComponent<Renderer>().material = _detailSkinsPrefabs[_currentDetailSkinIndex].Material;
         }
 
         public void NextBoardSkin() => RotateSkin(_boardPrefab, _boardSkinsPrefabs, ref _currentBoardIndex, ref _currentBoardSkinIndex, _boardConfig, MoveDirection.Right);
         public void PreviousBoardSkin() => RotateSkin(_boardPrefab, _boardSkinsPrefabs, ref _currentBoardIndex, ref _currentBoardSkinIndex, _boardConfig, MoveDirection.Left);
         public void NextBlockSkin() => RotateSkin(_detailPrefab, _detailSkinsPrefabs, ref _currentDetailIndex, ref _currentDetailSkinIndex, _blockConfig, MoveDirection.Right);
         public void PreviousBlockSkin() => RotateSkin(_detailPrefab, _detailSkinsPrefabs, ref _currentDetailIndex, ref _currentDetailSkinIndex, _blockConfig, MoveDirection.Left);
+
+        public void RollbackBoardSkin()
+        {
+            _currentBoardSkinIndex = (SaveData.BoardSkinIndex - 1 + _boardSkinsPrefabs.Length) % _boardSkinsPrefabs.Length;
+            NextBoardSkin();
+        }
+
+        public void RollbackBlockSkin()
+        {
+            _currentDetailSkinIndex = (SaveData.BlockSkinIndex - 1 + _detailSkinsPrefabs.Length) % _detailSkinsPrefabs.Length;
+            NextBlockSkin();
+        }
 
         private void RotateSkin(GameObject[] prefabsArray, Skins[] skinsPrefabsArray, ref int currentPrefabIndex, ref int currentSkinIndex, AnimationConfig animationConfig, MoveDirection moveDirection)
         {
@@ -93,6 +102,26 @@ namespace Assets.Scripts
                 .OnStart(() => newActivePrefab.SetActive(true));
         }
 
+        public void SelectCurrentBoardSkin()
+        {
+            SaveData.BoardSkinIndex = _currentBoardSkinIndex;
+        }
+
+        public void SelectCurrentBlockSkin()
+        {
+            SaveData.BlockSkinIndex = _currentDetailSkinIndex;
+        }
+
+        public bool IsCurrentBoardSkinSelected()
+        {
+            return SaveData.BoardSkinIndex == _currentBoardSkinIndex;
+        }
+
+        public bool IsCurrentBlockSkinSelected()
+        {
+            return SaveData.BlockSkinIndex == _currentDetailSkinIndex;
+        }
+
         public SkinInfo GetCurrentBoardSkinInfo()
         {
             return new SkinInfo
@@ -112,5 +141,8 @@ namespace Assets.Scripts
                 _detailSkinsPrefabs.Length
             );
         }
+
+        public Material GetSelectedBoardMaterial() => _boardSkinsPrefabs[SaveData.BoardSkinIndex].Material;
+        public Material GetSelectedBlockMaterial() => _detailSkinsPrefabs[SaveData.BlockSkinIndex].Material;
     }
 }  
