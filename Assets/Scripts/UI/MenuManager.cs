@@ -21,6 +21,8 @@ public class MenuManager : MonoBehaviour, IMovable
     [SerializeField] private TMP_Text skinCounterText;
     [SerializeField] private Button selectSkinButton;
 
+    [SerializeField] private TMP_Text highScoreText;
+
     [SerializeField] private Button skinBoardButton;
     [SerializeField] private Button skinBlockButton;
     [SerializeField] private MaterialManager materialManager;
@@ -53,6 +55,16 @@ public class MenuManager : MonoBehaviour, IMovable
 
         touchInputController.Initialization(this);
         touchInputController.enabled = false;
+
+        if (SaveData.HighScore > 0)
+        {
+            highScoreText.SetText("Best: {0}", SaveData.HighScore);
+            highScoreText.gameObject.SetActive(true);
+        }
+        else
+        {
+            highScoreText.gameObject.SetActive(false);
+        }
     }
 
     public void Play()
