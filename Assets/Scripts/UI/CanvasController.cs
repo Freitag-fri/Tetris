@@ -41,9 +41,13 @@ namespace Assets.Scripts
             ShowShadow();
         }
 
-        public void SetResultGameCanvas(StatisticParams statisticParams)
+        public void SetResultGameCanvas(StatisticParams statisticParams, bool isNewRecord)
         {
-            finaleScore.text = $"Score: {statisticParams.score}";
+            if(isNewRecord)
+                finaleScore.text = $"New Record: {statisticParams.score}";
+            else
+                finaleScore.text = $"Score: {statisticParams.score}";
+
             finaleLevel.text = $"Level: {statisticParams.gameLevel}";
             finaleLines.text = $"Lines: {statisticParams.totalNumberCleanLines}";
 
