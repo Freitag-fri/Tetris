@@ -17,7 +17,7 @@ namespace Assets.Scripts
         [SerializeField] private Image shadowObject;
 
         [SerializeField] private TMP_Text textScore;
-        [SerializeField] private TMP_Text textTotalNumberCleanLines;
+        [SerializeField] private TMP_Text textTotalNumberClearLines;
         [SerializeField] private TMP_Text textGameLevel;
         [SerializeField] private TMP_Text finaleScore;
         [SerializeField] private TMP_Text finaleLevel;
@@ -49,7 +49,7 @@ namespace Assets.Scripts
                 finaleScore.text = $"Score: {statisticParams.score}";
 
             finaleLevel.text = $"Level: {statisticParams.gameLevel}";
-            finaleLines.text = $"Lines: {statisticParams.totalNumberCleanLines}";
+            finaleLines.text = $"Lines: {statisticParams.totalNumberClearLines}";
 
             SetActiveCanvases(game: false, pause: false, result: true);
             PlayResultPanelAnimation();
@@ -58,7 +58,7 @@ namespace Assets.Scripts
         public void SetStatisticParams(StatisticParams statisticParams)
         {
             textScore.text = statisticParams.score.ToString();
-            textTotalNumberCleanLines.text = statisticParams.totalNumberCleanLines.ToString();
+            textTotalNumberClearLines.text = statisticParams.totalNumberClearLines.ToString();
             textGameLevel.text = statisticParams.gameLevel.ToString();
         }
 

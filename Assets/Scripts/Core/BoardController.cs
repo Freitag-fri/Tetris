@@ -222,7 +222,7 @@ namespace Assets.Scripts
 
                     UpdateBoardPositionsForNewDetail();
                     ChangeDetailParent();
-                    CheckLines();
+                    ClearFullLines();
                     isCreateDetail = true;
 
                     return;
@@ -385,9 +385,9 @@ namespace Assets.Scripts
             Destroy(activeDetail);
         }
 
-        void CheckLines()
+        void ClearFullLines()
         {
-            int numberCleanLines = 0;
+            int numberClearLines = 0;
             int firstFullLine = 0;
             for (int i = boardHeight - 1; i >= 0; i--)
             {
@@ -404,16 +404,16 @@ namespace Assets.Scripts
 
                 if (isFullLine)
                 {
-                    if (numberCleanLines == 0)
+                    if (numberClearLines == 0)
                         firstFullLine = i;
-                    numberCleanLines++;
+                    numberClearLines++;
                 }
             }
-            if (numberCleanLines > 0)
+            if (numberClearLines > 0)
             {
-                StartCoroutine(CleanLine(firstFullLine, numberCleanLines));
+                StartCoroutine(ClearLine(firstFullLine, numberClearLines));
 
-                var levelSettings = matchProgress.RegisterClearedLines(numberCleanLines);
+                var levelSettings = matchProgress.RegisterClearedLines(numberClearLines);
                 if(levelSettings.stepPeriod != stepPeriod)
                 {
                     stepPeriod = levelSettings.stepPeriod;
@@ -424,27 +424,27 @@ namespace Assets.Scripts
             }
         }
 
-        IEnumerator CleanLine(int firstFullLine, int numberCleanLines)
+        IEnumerator ClearLine(int firstFullLine, int numberClearLines)
         {
-            YieldInstruction[] destroyBlockAnimations = new YieldInstruction[numberCleanLines * boardWidth];
+            YieldInstruction[] destroyBlockAnimations = new YieldInstruction[numberClearLines * boardWidth];
             for (int j = 0; j < boardWidth; j++)
             {
-                for (int i = 0; i < numberCleanLines; i++)
+                for (int i = 0; i < numberClearLines; i++)
                 {
                     destroyBlockAnimations[i * boardWidth + j] = boardPositions[(firstFullLine - i) * boardWidth + j].GetComponent<Block>().DestroyBlock();
                     boardPositions[(firstFullLine - i) * boardWidth + j] = null;
                 }
-                yield return new WaitForSeconds(0.05f); // Add a small delay before cleaning the lines
+                yield return new WaitForSeconds(0.05f); // Add a small delay before clearing the lines
             }
             foreach(YieldInstruction instruction in destroyBlockAnimations)
                 yield return instruction;
 
-            MoveLinesAfterClean(firstFullLine, numberCleanLines);
+            MoveLinesAfterClear(firstFullLine, numberClearLines);
         }
 
-        private void MoveLinesAfterClean(int firstFullLine, int numberCleanLines)
+        private void MoveLinesAfterClear(int firstFullLine, int numberClearLines)
         {
-            for (int k = firstFullLine - numberCleanLines; k >= 0; k--)
+            for (int k = firstFullLine - numberClearLines; k >= 0; k--)
             {
                 bool isAnyDetailInLine = false;
 
@@ -454,12 +454,12 @@ namespace Assets.Scripts
                     if (boardPositions[oldArrayPosition] != null)
                     {
                         isAnyDetailInLine = true;
-                        var newArrayPosition = (k + numberCleanLines) * boardWidth + j;
+                        var newArrayPosition = (k + numberClearLines) * boardWidth + j;
                         boardPositions[newArrayPosition] = boardPositions[oldArrayPosition];
                         boardPositions[oldArrayPosition] = null;
 
                         var localDetailPosition = boardPositions[newArrayPosition].transform.localPosition;
-                        localDetailPosition.y = localDetailPosition.y - numberCleanLines;
+                        localDetailPosition.y = localDetailPosition.y - numberClearLines;
                         StartCoroutine(SmoothBlockMove(boardPositions[newArrayPosition].transform, localDetailPosition, smoothMoveDuration));
                     }
                 }
