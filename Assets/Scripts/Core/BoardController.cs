@@ -126,10 +126,11 @@ namespace Assets.Scripts
             StopAllCoroutines();
             IsPause = true;
 
-            if (matchProgress.Score > SaveData.HighScore)
+            bool isNewRecord = matchProgress.Score > SaveData.HighScore;
+            if (isNewRecord)
                 SaveData.HighScore = matchProgress.Score;
 
-            canvasController.SetResultGameCanvas(matchProgress.ToStatisticParams());
+            canvasController.SetResultGameCanvas(matchProgress.ToStatisticParams(), isNewRecord);
         }
 
         private void PauseGame()
