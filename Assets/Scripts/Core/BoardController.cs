@@ -8,14 +8,14 @@ namespace Assets.Scripts
 {
     public class BoardController : MonoBehaviour, IMovable
     {
-        public GameObject prefabForDropDetail;
-        public GameObject[] dropDetails = new GameObject[4];
+        [SerializeField] private GameObject prefabForDropDetail;
+        private GameObject[] dropDetails = new GameObject[4];
 
-        public bool isCreateDetail;
+        private bool isCreateDetail;
         public event Action CreateDetailEvent;
         [SerializeField] private GameObject activeDetail;
         private Vector2 targetPosition;
-        public Vector2 TargetPosition
+        private Vector2 TargetPosition
         {
             get { return targetPosition; }
             set
@@ -49,7 +49,7 @@ namespace Assets.Scripts
         private Coroutine activeDetailMoveCoroutine;
 
         private bool _isPause = false;
-        public bool IsPause 
+        private bool IsPause 
         {
             get { return _isPause; }
             set 

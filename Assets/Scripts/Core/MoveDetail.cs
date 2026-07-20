@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class MoveDetail : MonoBehaviour
 {
-    [SerializeField] public Detail detailScript;
+    [SerializeField] private Detail detailScript;
 
     [SerializeField] private GameObject detCenter;
 

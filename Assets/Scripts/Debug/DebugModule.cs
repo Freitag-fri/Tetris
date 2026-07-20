@@ -4,12 +4,12 @@ namespace Assets.Scripts
 {
 	public class DebugModule: MonoBehaviour
 	{
-        public BoardController boardController;
+        [SerializeField] private BoardController boardController;
 
-        public Material materialEmptyPosition;
-        public Material materialFullPosition;
-        public GameObject prefabForDebug;
-        public GameObject[] boardDebuggingDetails = new GameObject[200]; // get
+        [SerializeField] private Material materialEmptyPosition;
+        [SerializeField] private Material materialFullPosition;
+        [SerializeField] private GameObject prefabForDebug;
+        [SerializeField] private GameObject[] boardDebuggingDetails = new GameObject[200]; // get
 
         // Use this for initialization
         void Start()
