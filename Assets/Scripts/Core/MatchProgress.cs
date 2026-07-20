@@ -4,14 +4,14 @@ namespace Assets.Scripts
 {
     public struct StatisticParams
     {
-        public StatisticParams (int score, int totalNumberCleanLines, int gameLevel)
+        public StatisticParams (int score, int totalNumberClearLines, int gameLevel)
         {
             this.score = score;
-            this.totalNumberCleanLines = totalNumberCleanLines;
+            this.totalNumberClearLines = totalNumberClearLines;
             this.gameLevel = gameLevel;
         }
         public int score;
-        public int totalNumberCleanLines;
+        public int totalNumberClearLines;
         public int gameLevel;
     }
 
@@ -38,10 +38,10 @@ namespace Assets.Scripts
             CurrentLevel = LevelProgression.GetLevelSettingsByClearLines(TotalClearLines);
         }
 
-        public LevelsSettings RegisterClearedLines(int numberCleanLines)
+        public LevelsSettings RegisterClearedLines(int numberClearLines)
         {
-            TotalClearLines += numberCleanLines;
-            Score += pointsForLinesConfiguration[numberCleanLines];
+            TotalClearLines += numberClearLines;
+            Score += pointsForLinesConfiguration[numberClearLines];
             CurrentLevel = LevelProgression.GetLevelSettingsByClearLines(TotalClearLines);
             return CurrentLevel;
         }

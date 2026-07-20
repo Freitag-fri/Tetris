@@ -4235,7 +4235,7 @@ MonoBehaviour:
   newGameButton: {fileID: 1908406608}
   shadowObject: {fileID: 1593929730}
   textScore: {fileID: 1557366662}
-  textTotalNumberCleanLines: {fileID: 1380639408}
+  textTotalNumberClearLines: {fileID: 1380639408}
   textGameLevel: {fileID: 1749659658}
   finaleScore: {fileID: 1023718302}
   finaleLevel: {fileID: 840259638}
@@ -7263,7 +7263,7 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: -3440532205530907744, guid: e25cb25a6c431f744ac4d7476c765ca6, type: 3}
-      propertyPath: textTotalNumberCleanLines
+      propertyPath: textTotalNumberClearLines
       value: 
       objectReference: {fileID: 1380639408}
     - target: {fileID: -3440532205530907744, guid: e25cb25a6c431f744ac4d7476c765ca6, type: 3}
