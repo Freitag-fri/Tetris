@@ -44,7 +44,7 @@ namespace Assets.Scripts
         [SerializeField] private float stepPeriod;
         private readonly MatchProgress matchProgress = new MatchProgress();
 
-        [SerializeField] private CanvasController canvasController;
+        [SerializeField] private GameUIController gameUIController;
 
         private Coroutine activeDetailMoveCoroutine;
 
@@ -90,7 +90,7 @@ namespace Assets.Scripts
 
         private void SetupGame()
         {
-            canvasController.SetStartGameCanvas();
+            gameUIController.ShowGameScreen();
             activeDetail = null;
             targetPosition = Vector2.zero;
             matchProgress.Reset();
@@ -99,7 +99,7 @@ namespace Assets.Scripts
             stepPeriod = levelSettings.stepPeriod;
             smoothMoveDuration = stepPeriod / 5;
             timeUntilNextStep = stepPeriod;
-            canvasController.SetStatisticParams(matchProgress.ToStatisticParams());
+            gameUIController.SetStatisticParams(matchProgress.ToStatisticParams());
 
             IsPause = false;
             isCreateDetail = true;
@@ -130,19 +130,19 @@ namespace Assets.Scripts
             if (isNewRecord)
                 SaveData.HighScore = matchProgress.Score;
 
-            canvasController.SetResultGameCanvas(matchProgress.ToStatisticParams(), isNewRecord);
+            gameUIController.ShowResultScreen(matchProgress.ToStatisticParams(), isNewRecord);
         }
 
         private void PauseGame()
         {
             StopAllCoroutines();
-            canvasController.SetPauseGameCanvas();
+            gameUIController.ShowPauseScreen();
         }
 
         private void UnPauseGame()
         {
             StartCoroutine(SmoothMove(smoothMoveDuration));
-            canvasController.SetStartGameCanvas();
+            gameUIController.ShowGameScreen();
         }
 
         // Update is called once per frame
@@ -420,7 +420,7 @@ namespace Assets.Scripts
                     smoothMoveDuration = stepPeriod / 4;
                 }
 
-                canvasController.SetStatisticParams(matchProgress.ToStatisticParams());
+                gameUIController.SetStatisticParams(matchProgress.ToStatisticParams());
             }
         }
 
