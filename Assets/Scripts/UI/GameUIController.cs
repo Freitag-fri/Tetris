@@ -5,15 +5,10 @@ using DG.Tweening;
 
 namespace Assets.Scripts
 {
-    public class CanvasController : MonoBehaviour
+    public class GameUIController : MonoBehaviour
     {
-        [SerializeField] private GameObject gameCanvas; // for game over screen
-        [SerializeField] private GameObject pauseGameCanvas; // for pause game screen
-        [SerializeField] private GameObject resultGameCanvas; // for result game screen
-        [SerializeField] private GameObject shadowCanvas; // for shadowing background when pause or result game screen is active
         [SerializeField] private GameObject resultGamePanel;
         [SerializeField] private GameObject newGameButton;
-
         [SerializeField] private Image shadowObject;
 
         [SerializeField] private TMP_Text textScore;
@@ -29,19 +24,18 @@ namespace Assets.Scripts
         private const float ShadowFadeInEndAlpha = 0.8f;
         private const float ResultPanelAnimDuration = 0.2f;
 
-        public void SetStartGameCanvas()
+        public void ShowGameScreen()
         {
-            SetActiveCanvases(game: true, pause: false, result: false);
             HideShadow();
+            resultGamePanel.SetActive(false);
         }
 
-        public void SetPauseGameCanvas()
+        public void ShowPauseScreen()
         {
-            SetActiveCanvases(game: false, pause: true, result: false);
             ShowShadow();
         }
 
-        public void SetResultGameCanvas(StatisticParams statisticParams, bool isNewRecord)
+        public void ShowResultScreen(StatisticParams statisticParams, bool isNewRecord)
         {
             if(isNewRecord)
                 finaleScore.text = $"New Record: {statisticParams.score}";
@@ -51,7 +45,7 @@ namespace Assets.Scripts
             finaleLevel.text = $"Level: {statisticParams.gameLevel}";
             finaleLines.text = $"Lines: {statisticParams.totalNumberClearLines}";
 
-            SetActiveCanvases(game: false, pause: false, result: true);
+            resultGamePanel.SetActive(true);
             PlayResultPanelAnimation();
         }
 
@@ -62,32 +56,19 @@ namespace Assets.Scripts
             textGameLevel.text = statisticParams.gameLevel.ToString();
         }
 
-        private void SetActiveCanvases(bool game, bool pause, bool result)
-        {
-            gameCanvas.SetActive(game);
-            pauseGameCanvas.SetActive(pause);
-            resultGameCanvas.SetActive(result);
-        }
-
         private void ShowShadow()
         {
-            if (shadowCanvas.activeInHierarchy)
-                return;
-
             shadowObject
                 .DOFade(ShadowFadeInEndAlpha, ShadowFadeInDuration)
                 .From(ShadowFadeInStartAlpha)
-                .OnStart(() => shadowCanvas.SetActive(true));
+                .OnStart(() => shadowObject.gameObject.SetActive(true));
         }
 
         private void HideShadow()
         {
-            if (!shadowCanvas.activeInHierarchy)
-                return;
-
             shadowObject
                 .DOFade(0f, ShadowFadeOutDuration)
-                .OnComplete(() => shadowCanvas.SetActive(false));
+                .OnComplete(() => shadowObject.gameObject.SetActive(false));
         }
 
         private void PlayResultPanelAnimation()
