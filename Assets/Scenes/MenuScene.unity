@@ -4888,6 +4888,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SwipeHint
   maxShows: 3
   delay: 2.5
+  animator: {fileID: 1606248678}
 --- !u!4 &1752174890 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 208866538361772106, guid: 0daf5c8a7b16a3542a199bb8e59c97a8, type: 3}
