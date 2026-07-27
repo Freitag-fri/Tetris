@@ -26,6 +26,7 @@ public class MenuManager : MonoBehaviour, IMovable
     [SerializeField] private Button skinBoardButton;
     [SerializeField] private Button skinBlockButton;
     [SerializeField] private MaterialManager materialManager;
+    [SerializeField] private SwipeHint swipeHint;
 
     enum MenuStatus
     {
@@ -95,6 +96,7 @@ public class MenuManager : MonoBehaviour, IMovable
     public void EnterToMainMenu()
     {
         RollbackPreviewIfNeeded();
+        swipeHint.Hide();
 
         mainCamera.Priority = 1;
         boardCamera.Priority = 0;
@@ -117,48 +119,35 @@ public class MenuManager : MonoBehaviour, IMovable
         touchInputController.enabled = false;
     }
 
-    //public void ExitFromSkinsMenu()
-    //{
-    //    skinsMenu.SetActive(false);
-    //    menuPanel.SetActive(true);
-    //}
-
     public void EnterToBoardSkins()
     {
-        skinBoardButton.transform
-            .DOScale(Vector3.one * 1.2f, 0.2f)
-            .OnComplete(() =>{ skinBoardButton.transform
-                .DOScale(Vector3.one, 0.2f);
-            });
-
-        boardCamera.Priority = 3;
-        blockCamera.Priority = 0;
-        currentMenuStatus = MenuStatus.BoardSkins;
-        touchInputController.enabled = true;
-
-        skinLabel.SetActive(true);
-        UpdateSkinInfo();
+        EnterToSkins(skinBoardButton, boardCamera, blockCamera, MenuStatus.BoardSkins);
     }
 
     public void EnterToBlockSkins()
     {
-        skinBlockButton.transform
-            .DOScale(Vector3.one * 1.2f, 0.2f)
-            .OnComplete(() => {
-                skinBlockButton.transform
-                .DOScale(Vector3.one, 0.2f);
-            });
+        EnterToSkins(skinBlockButton, blockCamera, boardCamera, MenuStatus.BlockSkins);
+    }
 
-        blockCamera.Priority = 3;
-        boardCamera.Priority = 0;
-        currentMenuStatus = MenuStatus.BlockSkins;
+    private void EnterToSkins(Button button, CinemachineVirtualCamera activeCamera,
+                             CinemachineVirtualCamera inactiveCamera, MenuStatus status)
+    {
+        button.transform
+            .DOScale(Vector3.one * 1.2f, 0.2f)
+            .OnComplete(() => button.transform.DOScale(Vector3.one, 0.2f));
+
+        activeCamera.Priority = 3;
+        inactiveCamera.Priority = 0;
+        currentMenuStatus = status;
         touchInputController.enabled = true;
 
         skinLabel.SetActive(true);
         UpdateSkinInfo();
+
+        swipeHint.Show();
     }
 
-    private void SensorMoveLeft()
+    private void NextSkin()
     {
         if (currentMenuStatus == MenuStatus.BoardSkins)
         {
@@ -171,7 +160,7 @@ public class MenuManager : MonoBehaviour, IMovable
         UpdateSkinInfo();
     }
 
-    private void SensorMoveRight()
+    private void PreviousSkin()
     {
         if (currentMenuStatus == MenuStatus.BoardSkins)
         {
@@ -223,10 +212,12 @@ public class MenuManager : MonoBehaviour, IMovable
         switch (direction)
         {
             case MoveDirection.TurnLeft:
-                SensorMoveLeft();
+                swipeHint.HideAfterSwipe();
+                NextSkin();
                 break;
             case MoveDirection.TurnRight:
-                SensorMoveRight();
+                swipeHint.HideAfterSwipe();
+                PreviousSkin();
                 break;
             default:
                 Debug.Log($"Move direction {direction} is not supported in MenuManager");
