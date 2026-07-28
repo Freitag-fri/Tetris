@@ -4,8 +4,6 @@ public class MoveDetail : MonoBehaviour
 {
     [SerializeField] private Detail detailScript;
 
-    [SerializeField] private GameObject detCenter;
-
     public void TurnDetail(bool[] newGameObjectPositions)
     {
         detailScript.GameObjectPositions = newGameObjectPositions;

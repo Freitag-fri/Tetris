@@ -3775,6 +3775,10 @@ MonoBehaviour:
   - {fileID: 3166892392324062905, guid: 848456b33f0a8ba4eb57dcc40a217ca2, type: 3}
   - {fileID: 6552047032786707798, guid: b8c5abfef8f911d499596a33c90c1383, type: 3}
   - {fileID: 6802173719969099490, guid: 34916a3efeda6b94a97a8283e9c35824, type: 3}
+  - {fileID: 4864700778733877678, guid: 4fd235bbdabf9114ba97ea9c4f1cfd7d, type: 3}
+  - {fileID: 8437864547335923929, guid: eb5fefa4e12f0c94a9bb74499202de8d, type: 3}
+  - {fileID: 6153691685917462680, guid: 1ea1c70dc6260fe438ff120226cb64c9, type: 3}
+  - {fileID: 6981798141433504084, guid: e5c82398a2a3caf4896bb4227856d9d7, type: 3}
   nextDetailPosition: {fileID: 1747304789}
   blockMaterial: {fileID: 2100000, guid: dac2836cafea3504f8fa11131b81ac42, type: 2}
   boardMaterial: {fileID: 2100000, guid: 179a9ab4a7f63bd4ebc67cf28ef67075, type: 2}

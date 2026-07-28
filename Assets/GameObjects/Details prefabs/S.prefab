@@ -9,6 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 188062831525296151}
+  - component: {fileID: 762344072607230469}
+  - component: {fileID: -3094918001029173260}
   m_Layer: 0
   m_Name: S
   m_TagString: Untagged
@@ -35,6 +37,31 @@ Transform:
   - {fileID: 3955715548949843141}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &762344072607230469
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8437864547335923929}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 182e21c56869fa14aaac4799c5cf2472, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::S_object
+--- !u!114 &-3094918001029173260
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8437864547335923929}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 174a671f137edb24787af7b801fe6dd0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MoveDetail
+  detailScript: {fileID: 762344072607230469}
 --- !u!1001 &3747994723179156623
 PrefabInstance:
   m_ObjectHideFlags: 0
