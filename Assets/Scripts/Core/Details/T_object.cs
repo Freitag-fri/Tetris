@@ -1,8 +1,6 @@
 using UnityEngine;
-using UnityEngine.Rendering;
 
-
-public class L_object : Detail
+public class T_object : Detail
 {
     public override bool[] GameObjectPositions
     {
@@ -21,12 +19,12 @@ public class L_object : Detail
 
     public override void InitGameObjectPositions()
     {
-        GameObjectPositions = new bool[16] 
+        GameObjectPositions = new bool[16]
         {
             false, false, false, false,
-            false, true, false, false,
-            false, true, false, false,
-            false, true, true, false
+            false, false, false, false,
+            false, true,  true,  true,
+            false, false, true,  false
         };
     }
 }

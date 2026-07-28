@@ -61,6 +61,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 174a671f137edb24787af7b801fe6dd0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::moveDetail
+  detailScript: {fileID: -2996357594677181389}
 --- !u!1001 &4917882352180588814
 PrefabInstance:
   m_ObjectHideFlags: 0

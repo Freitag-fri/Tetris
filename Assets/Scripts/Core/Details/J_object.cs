@@ -19,10 +19,12 @@ public class J_object : Detail
 
     public override void InitGameObjectPositions()
     {
-        GameObjectPositions = new bool[16] {
-                                false, false, false, false,
-                                false, false, true, false,
-                                false, false, true, false,
-                                false, true, true, false };
+        GameObjectPositions = new bool[16] 
+        {
+            false, false, false, false,
+            false, false, true, false,
+            false, false, true, false,
+            false, true, true, false
+        };
     }
 }
