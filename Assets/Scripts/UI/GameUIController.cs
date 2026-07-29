@@ -9,6 +9,7 @@ namespace Assets.Scripts
     {
         [SerializeField] private GameObject resultGamePanel;
         [SerializeField] private GameObject newGameButton;
+        [SerializeField] private GameObject unPauseButton;
         [SerializeField] private Image shadowObject;
 
         [SerializeField] private TMP_Text textScore;
@@ -27,12 +28,14 @@ namespace Assets.Scripts
         public void ShowGameScreen()
         {
             HideShadow();
+            HideUnPauseButton();
             resultGamePanel.SetActive(false);
         }
 
         public void ShowPauseScreen()
         {
             ShowShadow();
+            ShowUnPauseButton();
         }
 
         public void ShowResultScreen(StatisticParams statisticParams, bool isNewRecord)
@@ -45,7 +48,6 @@ namespace Assets.Scripts
             finaleLevel.text = $"Level: {statisticParams.gameLevel}";
             finaleLines.text = $"Lines: {statisticParams.totalNumberClearLines}";
 
-            resultGamePanel.SetActive(true);
             PlayResultPanelAnimation();
         }
 
@@ -58,14 +60,16 @@ namespace Assets.Scripts
 
         private void ShowShadow()
         {
+            shadowObject.gameObject.SetActive(true);
             shadowObject
                 .DOFade(ShadowFadeInEndAlpha, ShadowFadeInDuration)
-                .From(ShadowFadeInStartAlpha)
-                .OnStart(() => shadowObject.gameObject.SetActive(true));
+                .From(ShadowFadeInStartAlpha);
         }
 
         private void HideShadow()
         {
+            if (!shadowObject.gameObject.activeSelf) return;
+
             shadowObject
                 .DOFade(0f, ShadowFadeOutDuration)
                 .OnComplete(() => shadowObject.gameObject.SetActive(false));
@@ -73,6 +77,7 @@ namespace Assets.Scripts
 
         private void PlayResultPanelAnimation()
         {
+            resultGamePanel.SetActive(true);
             DOTween.Sequence()
                 .Append(resultGamePanel.transform
                     .DOScale(Vector3.one, ResultPanelAnimDuration)
@@ -82,6 +87,25 @@ namespace Assets.Scripts
                     .DOScale(Vector3.one, ResultPanelAnimDuration)
                     .From(Vector3.zero)
                     .SetEase(Ease.OutBack));
+        }
+
+        private void ShowUnPauseButton()
+        {
+            unPauseButton.SetActive(true);
+            unPauseButton.transform
+                .DOScale(Vector3.one, ResultPanelAnimDuration + 0.1f)
+                .From(Vector3.zero);
+            unPauseButton.transform
+                .DOLocalMoveY(unPauseButton.transform.localPosition.y, ResultPanelAnimDuration + 0.1f)
+                .From(unPauseButton.transform.localPosition.y - 10);
+        }
+
+        private void HideUnPauseButton()
+        {
+            if (!unPauseButton.activeSelf) return;
+            unPauseButton.transform
+                .DOScale(Vector3.zero, ResultPanelAnimDuration - 0.05f)
+                .OnComplete(() => unPauseButton.SetActive(false));
         }
     }
 }
