@@ -1,7 +1,7 @@
 //using static UnityEngine.UIElements.UxmlAttributeDescription;
-using Assets.Scripts;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Scripts
@@ -135,13 +135,11 @@ namespace Assets.Scripts
 
         private void PauseGame()
         {
-            StopAllCoroutines();
             gameUIController.ShowPauseScreen();
         }
 
         private void UnPauseGame()
         {
-            StartCoroutine(SmoothMove(smoothMoveDuration));
             gameUIController.ShowGameScreen();
         }
 
@@ -306,7 +304,7 @@ namespace Assets.Scripts
                     if (offset != Vector2.zero)
                     {
                         ChangeDetailPosition(potentialPosition);
-                        Debug.Log($"Detail kicked to the {(offset.x > 0 ? "right" : "left")} for spin");
+                        // Debug.Log($"Detail kicked to the {(offset.x > 0 ? "right" : "left")} for spin");
                     }
 
                     // If the check passes, apply the changes
@@ -387,8 +385,7 @@ namespace Assets.Scripts
 
         void ClearFullLines()
         {
-            int numberClearLines = 0;
-            int firstFullLine = 0;
+            List<int> clearLines = null;
             for (int i = boardHeight - 1; i >= 0; i--)
             {
                 bool isFullLine = true;
@@ -404,71 +401,76 @@ namespace Assets.Scripts
 
                 if (isFullLine)
                 {
-                    if (numberClearLines == 0)
-                        firstFullLine = i;
-                    numberClearLines++;
+                    if(clearLines == null)
+                        clearLines = new List<int>(4);
+                    clearLines.Add(i);
                 }
             }
-            if (numberClearLines > 0)
+
+            if (clearLines == null)
+                return;
+
+            StartCoroutine(ClearLine(clearLines));
+            var levelSettings = matchProgress.RegisterClearedLines(clearLines.Count);
+            if(levelSettings.stepPeriod != stepPeriod)
             {
-                StartCoroutine(ClearLine(firstFullLine, numberClearLines));
-
-                var levelSettings = matchProgress.RegisterClearedLines(numberClearLines);
-                if(levelSettings.stepPeriod != stepPeriod)
-                {
-                    stepPeriod = levelSettings.stepPeriod;
-                    smoothMoveDuration = stepPeriod / 4;
-                }
-
-                gameUIController.SetStatisticParams(matchProgress.ToStatisticParams());
+                stepPeriod = levelSettings.stepPeriod;
+                smoothMoveDuration = stepPeriod / 4;
             }
+
+            gameUIController.SetStatisticParams(matchProgress.ToStatisticParams());
         }
 
-        IEnumerator ClearLine(int firstFullLine, int numberClearLines)
+        IEnumerator ClearLine(List<int> clearLines)
         {
-            YieldInstruction[] destroyBlockAnimations = new YieldInstruction[numberClearLines * boardWidth];
+            YieldInstruction[] destroyBlockAnimations = new YieldInstruction[clearLines.Count * boardWidth];
             for (int j = 0; j < boardWidth; j++)
             {
-                for (int i = 0; i < numberClearLines; i++)
+                for (int i = 0; i < clearLines.Count; i++)
                 {
-                    destroyBlockAnimations[i * boardWidth + j] = boardPositions[(firstFullLine - i) * boardWidth + j].GetComponent<Block>().DestroyBlock();
-                    boardPositions[(firstFullLine - i) * boardWidth + j] = null;
+                    destroyBlockAnimations[i * boardWidth + j] = boardPositions[clearLines[i] * boardWidth + j].GetComponent<Block>().DestroyBlock();
+                    boardPositions[clearLines[i] * boardWidth + j] = null;
                 }
                 yield return new WaitForSeconds(0.05f); // Add a small delay before clearing the lines
             }
             foreach(YieldInstruction instruction in destroyBlockAnimations)
                 yield return instruction;
 
-            MoveLinesAfterClear(firstFullLine, numberClearLines);
+            MoveLinesAfterClear(clearLines);
         }
 
-        private void MoveLinesAfterClear(int firstFullLine, int numberClearLines)
+        private void MoveLinesAfterClear(List<int> clearLines)
         {
-            for (int k = firstFullLine - numberClearLines; k >= 0; k--)
+            int writeRow = boardHeight - 1;
+            for (int readRow = boardHeight - 1; readRow >= 0; readRow--)
             {
-                bool isAnyDetailInLine = false;
+                if (clearLines.Contains(readRow))
+                    continue;
 
-                for (int j = 0; j < boardWidth; j++)
-                {
-                    var oldArrayPosition = k * boardWidth + j;
-                    if (boardPositions[oldArrayPosition] != null)
-                    {
-                        isAnyDetailInLine = true;
-                        var newArrayPosition = (k + numberClearLines) * boardWidth + j;
-                        boardPositions[newArrayPosition] = boardPositions[oldArrayPosition];
-                        boardPositions[oldArrayPosition] = null;
+                if (readRow != writeRow)
+                    MoveRowDown(readRow, writeRow);
 
-                        var localDetailPosition = boardPositions[newArrayPosition].transform.localPosition;
-                        localDetailPosition.y = localDetailPosition.y - numberClearLines;
-                        StartCoroutine(SmoothBlockMove(boardPositions[newArrayPosition].transform, localDetailPosition, smoothMoveDuration));
-                    }
-                }
-
-                if (!isAnyDetailInLine)
-                {
-                    break;
-                }
+                writeRow--;
             }
+        }
+
+        private void MoveRowDown(int fromRow, int toRow)
+        {
+            for (int j = 0; j < boardWidth; j++)
+            {
+                var oldArrayPosition = fromRow * boardWidth + j;
+                if (boardPositions[oldArrayPosition] != null)
+                {
+                    var newArrayPosition = toRow * boardWidth + j;
+
+                    boardPositions[newArrayPosition] = boardPositions[oldArrayPosition];
+                    boardPositions[oldArrayPosition] = null;
+
+                    var localDetailPosition = boardPositions[newArrayPosition].transform.localPosition;
+                    localDetailPosition.y = localDetailPosition.y - (toRow - fromRow);
+                    StartCoroutine(SmoothBlockMove(boardPositions[newArrayPosition].transform, localDetailPosition, smoothMoveDuration));
+                }
+            } 
         }
 
         void CreateNewDetail()
@@ -518,9 +520,9 @@ namespace Assets.Scripts
                     int col = (int)detailPosition.x + localCol;
                     int row = ((int)detailPosition.y * -1 + localRow);
 
+                    // The new position is outside the board or the position is already occupied
                     if (col < 0 || col >= boardWidth)
                     {
-                        Debug.Log("The new position is outside the board or the position is already occupied. col: " + col);
                         return false;
                     }
 
@@ -531,7 +533,6 @@ namespace Assets.Scripts
                     // the new position is outside the board or the position is already occupied
                     if (newArrayPosition >= boardSize || localBoardPositions[newArrayPosition] != null)
                     {
-                        Debug.Log("The new position is outside the board or the position is already occupied. Position: " + newArrayPosition);
                         return false;
                     }
                 }
@@ -570,7 +571,7 @@ namespace Assets.Scripts
                     activeDetail.transform.localPosition = Vector2.Lerp(startPosition, targetPosition, elapsedTime / duration);
                     elapsedTime += Time.deltaTime;
                 }
-                yield return null;
+                yield return new WaitUntil(() => !IsPause);
             }
 
             if (activeDetail)
@@ -589,7 +590,7 @@ namespace Assets.Scripts
             {
                 blockTransform.localPosition = Vector2.Lerp(startPosition, targetPosition, elapsedTime / duration);
                 elapsedTime += Time.deltaTime;
-                yield return null;
+                yield return new WaitUntil(() => !IsPause);
             }
 
             blockTransform.localPosition = targetPosition;
