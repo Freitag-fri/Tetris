@@ -159,7 +159,7 @@ namespace Assets.Scripts
 
         public void Move(MoveDirection direction)
         {
-            if (IsPause)
+            if (IsPause || activeDetail == null)
                 return;
 
             switch (direction)
@@ -220,8 +220,9 @@ namespace Assets.Scripts
 
                     UpdateBoardPositionsForNewDetail();
                     ChangeDetailParent();
-                    ClearFullLines();
-                    isCreateDetail = true;
+                    // If lines are cleared, next detail will creat in ClearLine function
+                    if (!TryClearFullLines())
+                        isCreateDetail = true;
 
                     return;
                 }
@@ -383,7 +384,8 @@ namespace Assets.Scripts
             Destroy(activeDetail);
         }
 
-        void ClearFullLines()
+        // Returns true when at least one full line was found
+        bool TryClearFullLines()
         {
             List<int> clearLines = null;
             for (int i = boardHeight - 1; i >= 0; i--)
@@ -408,7 +410,7 @@ namespace Assets.Scripts
             }
 
             if (clearLines == null)
-                return;
+                return false;
 
             StartCoroutine(ClearLine(clearLines));
             var levelSettings = matchProgress.RegisterClearedLines(clearLines.Count);
@@ -419,6 +421,8 @@ namespace Assets.Scripts
             }
 
             gameUIController.SetStatisticParams(matchProgress.ToStatisticParams());
+
+            return true;
         }
 
         IEnumerator ClearLine(List<int> clearLines)
@@ -437,6 +441,7 @@ namespace Assets.Scripts
                 yield return instruction;
 
             MoveLinesAfterClear(clearLines);
+            isCreateDetail = true;
         }
 
         private void MoveLinesAfterClear(List<int> clearLines)
