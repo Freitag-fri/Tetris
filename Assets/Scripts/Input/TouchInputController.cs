@@ -20,28 +20,27 @@ namespace Assets.Scripts
             if (_movable == null)
                 return;
 
-            if (Touchscreen.current == null)
+            var pointer = Pointer.current;
+            if (pointer == null)
                 return;
 
-            var touch = Touchscreen.current.primaryTouch;
-
-            if (touch.press.wasPressedThisFrame)
+            if (pointer.press.wasPressedThisFrame)
             {
                 if (useWorldCoordinates)
-                    HandleWorldTouchStart(touch.position.ReadValue());
+                    HandleWorldTouchStart(pointer.position.ReadValue());
                 else
-                    HandlePixelTouchStart(touch.position.ReadValue());
+                    HandlePixelTouchStart(pointer.position.ReadValue());
             }
 
-            if (touch.press.isPressed && useWorldCoordinates)
-                HandleWorldTouchDrag(touch.position.ReadValue());
+            if (pointer.press.isPressed && useWorldCoordinates)
+                HandleWorldTouchDrag(pointer.position.ReadValue());
 
-            if (touch.press.wasReleasedThisFrame)
+            if (pointer.press.wasReleasedThisFrame)
             {
                 if (useWorldCoordinates)
-                    HandleWorldTouchEnd(touch.position.ReadValue());
+                    HandleWorldTouchEnd(pointer.position.ReadValue());
                 else
-                    HandlePixelTouchEnd(touch.position.ReadValue());
+                    HandlePixelTouchEnd(pointer.position.ReadValue());
             }
         }
 

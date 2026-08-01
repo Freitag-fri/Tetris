@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Assets.Scripts
 {
@@ -12,23 +13,27 @@ namespace Assets.Scripts
             if(_movable == null)
                 return;
 
-            if (Input.GetKeyDown(KeyCode.D))
+            var keyboard = Keyboard.current;
+            if (keyboard == null)
+                return;
+
+            if (keyboard.dKey.wasPressedThisFrame || keyboard.rightArrowKey.wasPressedThisFrame)
             {
                 _movable.Move(MoveDirection.Right);
             }
-            else if (Input.GetKeyDown(KeyCode.A))
+            else if (keyboard.aKey.wasPressedThisFrame || keyboard.leftArrowKey.wasPressedThisFrame)
             {
                 _movable.Move(MoveDirection.Left);
             }
-            else if (Input.GetKeyDown(KeyCode.W))
+            else if (keyboard.wKey.wasPressedThisFrame || keyboard.upArrowKey.wasPressedThisFrame)
             {
                 _movable.Move(MoveDirection.TurnRight);
             }
-            else if (Input.GetKeyDown(KeyCode.S))
+            else if (keyboard.sKey.wasPressedThisFrame || keyboard.downArrowKey.wasPressedThisFrame)
             {
                 _movable.Move(MoveDirection.TurnLeft);
             }
-            else if (Input.GetKeyDown(KeyCode.Space))
+            else if (keyboard.spaceKey.wasPressedThisFrame)
             {
                 _movable.Move(MoveDirection.Down);
             }
