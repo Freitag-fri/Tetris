@@ -16,16 +16,15 @@ namespace Assets.Scripts
 
         private void Awake()
         {
-
-            blockMaterial.mainTexture = GameManager.Instance.BlockMaterial.mainTexture;
-            boardMaterial.mainTexture = GameManager.Instance.BoardMaterial.mainTexture;
-            ghostMaterial.mainTexture = GameManager.Instance.BlockMaterial.mainTexture;
-        }
-
-        // Use this for initialization
-        void Start()
-		{
             prefabDetailsCount = prefabDetails.Length;
+
+            var gameManager = GameManager.Instance;
+            if (gameManager == null || gameManager.BlockMaterial == null || gameManager.BoardMaterial == null)
+                return;
+
+            blockMaterial.mainTexture = gameManager.BlockMaterial.mainTexture;
+            boardMaterial.mainTexture = gameManager.BoardMaterial.mainTexture;
+            ghostMaterial.mainTexture = gameManager.BlockMaterial.mainTexture;
         }
 
         private void CreateNextDetail() 
