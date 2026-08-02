@@ -340,10 +340,9 @@ namespace Assets.Scripts
                 int col = (int)currentNewDetailPosition.x + (int)childLocalPosition.x;
                 int row = ((int)currentNewDetailPosition.y + (int)childLocalPosition.y) * -1;
 
-                for (int j = row +1; j <= boardHeight + 1; j++)
+                for (int newChickingRow = row + 1; newChickingRow <= boardHeight + 1; newChickingRow++)
                 {
-                    int currentPosition = col + j * boardWidth;
-                    if (currentPosition >= boardSize || (currentPosition >= 0 && boardPositions[currentPosition] != null))
+                    if (IsOccupied(col, newChickingRow))
                     {
                         if (newCountEmptyRows < countEmptyRows)
                             countEmptyRows = newCountEmptyRows;
@@ -353,6 +352,19 @@ namespace Assets.Scripts
                 }
             }
             return countEmptyRows;
+        }
+
+        private bool IsOccupied(int col, int row)
+        {
+            if (col < 0 || col >= boardWidth) return true;
+            if (row < 0) return false; // above the board, never occupied
+            int index = GetPositionIndex(col, row);
+            return index >= boardSize || boardPositions[index] != null;
+        }
+
+        private int GetPositionIndex(int col, int row)
+        {
+            return col + row * boardWidth;
         }
 
         void GhostPieceDetail()
@@ -388,13 +400,13 @@ namespace Assets.Scripts
         bool TryClearFullLines()
         {
             List<int> clearLines = null;
-            for (int i = boardHeight - 1; i >= 0; i--)
+            for (int row = boardHeight - 1; row >= 0; row--)
             {
                 bool isFullLine = true;
 
-                for (int j = 0; j < boardWidth; j++)
+                for (int col = 0; col < boardWidth; col++)
                 {
-                    if (boardPositions[i * boardWidth + j] == null)
+                    if (boardPositions[GetPositionIndex(col, row)] == null)
                     {
                         isFullLine = false;
                         break;
@@ -405,7 +417,7 @@ namespace Assets.Scripts
                 {
                     if(clearLines == null)
                         clearLines = new List<int>(4);
-                    clearLines.Add(i);
+                    clearLines.Add(row);
                 }
             }
 
@@ -428,12 +440,12 @@ namespace Assets.Scripts
         IEnumerator ClearLine(List<int> clearLines)
         {
             YieldInstruction[] destroyBlockAnimations = new YieldInstruction[clearLines.Count * boardWidth];
-            for (int j = 0; j < boardWidth; j++)
+            for (int col = 0; col < boardWidth; col++)
             {
                 for (int i = 0; i < clearLines.Count; i++)
                 {
-                    destroyBlockAnimations[i * boardWidth + j] = boardPositions[clearLines[i] * boardWidth + j].GetComponent<Block>().DestroyBlock();
-                    boardPositions[clearLines[i] * boardWidth + j] = null;
+                    destroyBlockAnimations[GetPositionIndex(col, i)] = boardPositions[GetPositionIndex(col, clearLines[i])].GetComponent<Block>().DestroyBlock();
+                    boardPositions[GetPositionIndex(col, clearLines[i])] = null;
                 }
                 yield return new WaitForSeconds(0.05f); // Add a small delay before clearing the lines
             }
@@ -461,12 +473,12 @@ namespace Assets.Scripts
 
         private void MoveRowDown(int fromRow, int toRow)
         {
-            for (int j = 0; j < boardWidth; j++)
+            for (int col = 0; col < boardWidth; col++)
             {
-                var oldArrayPosition = fromRow * boardWidth + j;
+                var oldArrayPosition = GetPositionIndex(col, fromRow);
                 if (boardPositions[oldArrayPosition] != null)
                 {
-                    var newArrayPosition = toRow * boardWidth + j;
+                    var newArrayPosition = GetPositionIndex(col, toRow);
 
                     boardPositions[newArrayPosition] = boardPositions[oldArrayPosition];
                     boardPositions[oldArrayPosition] = null;
@@ -513,8 +525,6 @@ namespace Assets.Scripts
 
         bool CheckNewDetailPosition(Vector2 detailPosition, bool[] detail)
         {
-            var localBoardPositions = boardPositions;
-
             for (int i = 0; i < 16; i++)
             {
                 if (detail[i])
@@ -525,18 +535,7 @@ namespace Assets.Scripts
                     int col = (int)detailPosition.x + localCol;
                     int row = ((int)detailPosition.y * -1 + localRow);
 
-                    // The new position is outside the board or the position is already occupied
-                    if (col < 0 || col >= boardWidth)
-                    {
-                        return false;
-                    }
-
-                    if (row < 0) // block is under the board, we don't need to check it because we will check it when it will be on the board
-                        continue;
-
-                    int newArrayPosition = col + (row * boardWidth);
-                    // the new position is outside the board or the position is already occupied
-                    if (newArrayPosition >= boardSize || localBoardPositions[newArrayPosition] != null)
+                    if (IsOccupied(col, row))
                     {
                         return false;
                     }
@@ -558,7 +557,7 @@ namespace Assets.Scripts
                 if (row < 0) // block is under the board, we don't need to add it to the board positions because we will add it when it will be on the board
                     continue;
 
-                boardPositions[col + row * boardWidth] = activeDetail.transform.GetChild(i).gameObject; // check (col + row * boardWidth) before set
+                boardPositions[GetPositionIndex(col, row)] = activeDetail.transform.GetChild(i).gameObject;
             }
         }
 
