@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Skins
   _id: Orange wood
   _material: {fileID: 2100000, guid: 222fe0f9ff488e747b4cc3d8bfbf8de2, type: 2}
+  _audio: {fileID: 8300000, guid: 7a900e8052f8ccc4a9738bfd324c0d6e, type: 3}

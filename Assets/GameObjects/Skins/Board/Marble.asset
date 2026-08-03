@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Skins
   _id: Marble
   _material: {fileID: 2100000, guid: 0e62a00264a77a84c92c174b04b91299, type: 2}
+  _audio: {fileID: 8300000, guid: 4392a858ed4c0fc428a5292890de5d91, type: 3}
