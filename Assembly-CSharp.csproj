@@ -60,6 +60,7 @@
     <Compile Include="Assets\Scripts\Core\Details\S_object.cs" />
     <Compile Include="Assets\Scripts\Debug\DebugModule.cs" />
     <Compile Include="Assets\Scripts\UI\GameUIController.cs" />
+    <Compile Include="Assets\Scripts\Core\BoardAudio.cs" />
     <Compile Include="Assets\Scripts\UI\MenuUIController.cs" />
     <Compile Include="Assets\Scripts\Core\MoveDetail.cs" />
     <Compile Include="Assets\Scripts\Input\TouchInputController.cs" />

@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Skins
   _id: Stone
   _material: {fileID: 2100000, guid: 5bca953063038d8458a5718555ead5fd, type: 2}
+  _audio: {fileID: 8300000, guid: 34c9fe0e2a9615c43ba1fca8b79e6f1d, type: 3}

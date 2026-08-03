@@ -44,6 +44,7 @@ namespace Assets.Scripts
         [SerializeField] private float stepPeriod;
         private readonly MatchProgress matchProgress = new MatchProgress();
 
+        [SerializeField] private BoardAudio boardAudio;
         [SerializeField] private GameUIController gameUIController;
 
         private Coroutine activeDetailMoveCoroutine;
@@ -218,6 +219,8 @@ namespace Assets.Scripts
                         activeDetailMoveCoroutine = null;
                     }
 
+                    var contactInfo = GetContactInfo();
+                    boardAudio.PlayContactSound(contactInfo.totalContacts, contactInfo.colSum, contactInfo.isFloor, isHardDropping);
                     UpdateBoardPositionsForNewDetail();
                     ChangeDetailParent();
                     // If lines are cleared, next detail will creat in ClearLine function
@@ -326,7 +329,7 @@ namespace Assets.Scripts
             TargetPosition = newDetailPosition;
         }
 
-        int GetCountEmptyRowsUnderDetail()
+        private int GetCountEmptyRowsUnderDetail()
         {
             var currentNewDetailPosition = TargetPosition;
             var detailChildCount = activeDetail.transform.childCount;
@@ -340,9 +343,9 @@ namespace Assets.Scripts
                 int col = (int)currentNewDetailPosition.x + (int)childLocalPosition.x;
                 int row = ((int)currentNewDetailPosition.y + (int)childLocalPosition.y) * -1;
 
-                for (int newChickingRow = row + 1; newChickingRow <= boardHeight + 1; newChickingRow++)
+                for (int newCheckingRow = row + 1; newCheckingRow <= boardHeight + 1; newCheckingRow++)
                 {
-                    if (IsOccupied(col, newChickingRow))
+                    if (IsOccupied(col, newCheckingRow))
                     {
                         if (newCountEmptyRows < countEmptyRows)
                             countEmptyRows = newCountEmptyRows;
@@ -352,6 +355,34 @@ namespace Assets.Scripts
                 }
             }
             return countEmptyRows;
+        }
+
+        private (int totalContacts, float colSum, bool isFloor) GetContactInfo()
+        {
+            int totalContacts = 0;
+            float colSum = 0f;
+            bool isFloor = false;
+
+            var currentPosition = targetPosition;
+            var detailChildCount = activeDetail.transform.childCount;
+
+            for (int i = 0; i < detailChildCount; i++)
+            {
+                var childLocalPosition = activeDetail.transform.GetChild(i).gameObject.transform.localPosition;
+                int col = (int)currentPosition.x + (int)childLocalPosition.x;
+                int row = ((int)currentPosition.y + (int)childLocalPosition.y) * -1;
+                
+                int rowPositionUnderDetail = row + 1;
+                if(IsOccupied(col, rowPositionUnderDetail))
+                {
+                    if(rowPositionUnderDetail >= boardHeight)
+                        isFloor = true;
+
+                    totalContacts++;
+                    colSum += col;
+                }
+            }
+            return (totalContacts, colSum, isFloor);
         }
 
         private bool IsOccupied(int col, int row)
@@ -446,6 +477,7 @@ namespace Assets.Scripts
                 {
                     destroyBlockAnimations[GetPositionIndex(col, i)] = boardPositions[GetPositionIndex(col, clearLines[i])].GetComponent<Block>().DestroyBlock();
                     boardPositions[GetPositionIndex(col, clearLines[i])] = null;
+                    boardAudio.PlayDestroySound(col);
                 }
                 yield return new WaitForSeconds(0.05f); // Add a small delay before clearing the lines
             }

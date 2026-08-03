@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Skins
   _id: Metal
   _material: {fileID: 2100000, guid: 381d301bf4e397b46b5f38322af7ddd6, type: 2}
+  _audio: {fileID: 8300000, guid: 97cf071e7e4c2334e9dd8a4cbf7f7adb, type: 3}

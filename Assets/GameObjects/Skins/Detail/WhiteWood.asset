@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Skins
   _id: WhiteWood
   _material: {fileID: 2100000, guid: 914b751d71c36094c94aa652f18d821f, type: 2}
+  _audio: {fileID: 8300000, guid: a2974534651038f4f80df12cfd213a07, type: 3}
