@@ -19,12 +19,12 @@ namespace Assets.Scripts
             prefabDetailsCount = prefabDetails.Length;
 
             var gameManager = GameManager.Instance;
-            if (gameManager == null || gameManager.BlockMaterial == null || gameManager.BoardMaterial == null)
+            if (gameManager == null || gameManager.BlockSkin == null || gameManager.BoardSkin == null)
                 return;
 
-            blockMaterial.mainTexture = gameManager.BlockMaterial.mainTexture;
-            boardMaterial.mainTexture = gameManager.BoardMaterial.mainTexture;
-            ghostMaterial.mainTexture = gameManager.BlockMaterial.mainTexture;
+            blockMaterial.mainTexture = gameManager.BlockSkin.Material.mainTexture;
+            boardMaterial.mainTexture = gameManager.BoardSkin.Material.mainTexture;
+            ghostMaterial.mainTexture = gameManager.BlockSkin.Material.mainTexture;
         }
 
         private void CreateNextDetail() 

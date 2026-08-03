@@ -141,8 +141,5 @@ namespace Assets.Scripts
                 _detailSkinsPrefabs.Length
             );
         }
-
-        public Material GetSelectedBoardMaterial() => _boardSkinsPrefabs[SaveData.BoardSkinIndex].Material;
-        public Material GetSelectedBlockMaterial() => _detailSkinsPrefabs[SaveData.BlockSkinIndex].Material;
     }
 }  

@@ -72,8 +72,8 @@ namespace Assets.Scripts
 
         public void Play()
         {
-            GameManager.Instance.BoardMaterial = materialManager.GetSelectedBoardMaterial();
-            GameManager.Instance.BlockMaterial = materialManager.GetSelectedBlockMaterial();
+            GameManager.Instance.BoardSkin = materialManager.GetCurrentBoardSkinInfo().Skin;
+            GameManager.Instance.BlockSkin = materialManager.GetCurrentBlockSkinInfo().Skin;
             SceneManager.LoadScene("GameScene");
         }
 

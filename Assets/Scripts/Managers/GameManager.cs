@@ -6,8 +6,8 @@ namespace Assets.Scripts
     {
         public static GameManager Instance { get; private set; }
 
-        public Material BoardMaterial { get; set; }
-        public Material BlockMaterial { get; set; }
+        public Skins BoardSkin { get; set; }
+        public Skins BlockSkin { get; set; }
         void Awake()
         {
             if (Instance != null && Instance != this)
