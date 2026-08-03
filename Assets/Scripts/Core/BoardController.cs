@@ -331,17 +331,16 @@ namespace Assets.Scripts
 
         private int GetCountEmptyRowsUnderDetail()
         {
-            var currentNewDetailPosition = TargetPosition;
+            var currentDetailPosition = TargetPosition;
             var detailChildCount = activeDetail.transform.childCount;
-            int countEmptyRows = boardHeight;
-            int newCountEmptyRows = 0;
+            int countEmptyRows = boardHeight + 3;
 
             for (int i = 0; i < detailChildCount; i++)
             {
-                newCountEmptyRows = 0;
+                int newCountEmptyRows = 0;
                 var childLocalPosition = activeDetail.transform.GetChild(i).gameObject.transform.localPosition;
-                int col = (int)currentNewDetailPosition.x + (int)childLocalPosition.x;
-                int row = ((int)currentNewDetailPosition.y + (int)childLocalPosition.y) * -1;
+                int col = (int)currentDetailPosition.x + (int)childLocalPosition.x;
+                int row = ((int)currentDetailPosition.y + (int)childLocalPosition.y) * -1;
 
                 for (int newCheckingRow = row + 1; newCheckingRow <= boardHeight + 1; newCheckingRow++)
                 {
