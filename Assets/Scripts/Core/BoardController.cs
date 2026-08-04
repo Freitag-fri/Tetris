@@ -49,6 +49,7 @@ namespace Assets.Scripts
 
         private Coroutine activeDetailMoveCoroutine;
 
+        private bool isGameOver;
         private bool _isPause = false;
         private bool IsPause 
         {
@@ -102,6 +103,7 @@ namespace Assets.Scripts
             timeUntilNextStep = stepPeriod;
             gameUIController.SetStatisticParams(matchProgress.ToStatisticParams());
 
+            isGameOver = false;
             IsPause = false;
             isCreateDetail = true;
         }
@@ -125,7 +127,7 @@ namespace Assets.Scripts
         private void FinishMatch()
         {
             StopAllCoroutines();
-            IsPause = true;
+            isGameOver = true;
 
             bool isNewRecord = matchProgress.Score > SaveData.HighScore;
             if (isNewRecord)
@@ -152,7 +154,7 @@ namespace Assets.Scripts
                 CreateNewDetail();
             }
 
-            if (!IsPause)
+            if (!IsPause && !isGameOver)
             {
                 MoveDetailController();
             }
@@ -160,7 +162,7 @@ namespace Assets.Scripts
 
         public void Move(MoveDirection direction)
         {
-            if (IsPause || activeDetail == null)
+            if (IsPause || isGameOver || activeDetail == null)
                 return;
 
             switch (direction)
