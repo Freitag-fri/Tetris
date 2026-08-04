@@ -40,6 +40,7 @@ namespace Assets.Scripts
 
         public void ShowResultScreen(StatisticParams statisticParams, bool isNewRecord)
         {
+            ShowShadow();
             if(isNewRecord)
                 finaleScore.text = $"New Record: {statisticParams.score}";
             else
