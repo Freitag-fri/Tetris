@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 namespace Assets.Scripts
@@ -22,6 +23,11 @@ namespace Assets.Scripts
 
             var pointer = Pointer.current;
             if (pointer == null)
+                return;
+
+            // The board's raycast onto the table plane isn't blocked by UI, so a tap on a UI
+            // button (e.g. Resume) would also register as board input; ignore it in that case.
+            if (useWorldCoordinates && EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
                 return;
 
             if (pointer.press.wasPressedThisFrame)
