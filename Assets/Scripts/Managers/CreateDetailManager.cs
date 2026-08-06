@@ -24,6 +24,7 @@ namespace Assets.Scripts
 
             blockMaterial.mainTexture = gameManager.BlockSkin.Material.mainTexture;
             boardMaterial.mainTexture = gameManager.BoardSkin.Material.mainTexture;
+            boardMaterial.SetTextureScale("_BaseMap", gameManager.BoardSkin.Material.GetTextureScale("_BaseMap"));
             ghostMaterial.mainTexture = gameManager.BlockSkin.Material.mainTexture;
         }
 
