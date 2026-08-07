@@ -9,7 +9,6 @@ namespace Assets.Scripts
         private AudioClip detailContactSound;
         [SerializeField] private AudioClip destroySound;
 
-
         void Start()
         {
             audioSource = this.GetComponent<AudioSource>();
@@ -30,14 +29,14 @@ namespace Assets.Scripts
             else
                 audioClip = detailContactSound;
             
-            var panStereo = PanStereo(colSum/totalContacts);
-            float volume = Mathf.Lerp(0.7f, 1f, (totalContacts - 1) / 3f);
+            var panStereo = GetPanStereo(colSum/totalContacts);
+            float volume = Mathf.Lerp(0.7f, 1f, (totalContacts - 1) / 3f); // the more blocks were in contact, the louder the sound
             PlayClip(audioClip, panStereo, isHardDropping, volume);
         }
     
         public void PlayDestroySound(float col)
         {
-            var panStereo = PanStereo(col);
+            var panStereo = GetPanStereo(col);
             PlayClip(destroySound, panStereo, false, 0.3f);
         }
 
@@ -45,10 +44,13 @@ namespace Assets.Scripts
         {
             audioSource.panStereo = panStereo;
             audioSource.pitch = isHardDropping ? 0.9f : 1f;
-            audioSource.PlayOneShot(audioClip, volume);
+
+            float globalVolume = SaveData.Volume;
+            float newVolume = Mathf.Lerp(0, 1, volume * globalVolume/100f);
+            audioSource.PlayOneShot(audioClip, newVolume);
         }
 
-        private float PanStereo(float column)
+        private float GetPanStereo(float column)
         {
             var centrContact = Mathf.InverseLerp(0f, 9f, column);
             var panStereo = Mathf.Lerp(-0.5f, 0.5f, centrContact);

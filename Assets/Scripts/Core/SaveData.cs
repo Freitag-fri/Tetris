@@ -9,6 +9,7 @@ namespace Assets.Scripts
         private const string boardSkinKey = "BoardSkin";
         private const string blockSkinKey = "BlockSkin";
         private const string swipeHintShowCountKey = "SwipeHintShowCount";
+        private const string volume = "Volume";
 
         public static int HighScore
         {
@@ -46,6 +47,16 @@ namespace Assets.Scripts
             set
             {
                 PlayerPrefs.SetInt(swipeHintShowCountKey, value);
+                PlayerPrefs.Save();
+            }
+        }
+
+        public static int Volume
+        {
+            get => PlayerPrefs.GetInt(volume, 50);
+            set
+            {
+                PlayerPrefs.SetInt(volume, value);
                 PlayerPrefs.Save();
             }
         }
